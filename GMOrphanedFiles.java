@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 public class GMOrphanedFiles {
+	private static final String SCRIPT_FOLDER=".\\project\\scripts";
+	
 	public static void main(String[] args) throws IOException {
-		GMOrphanedFiles gmoScripts=new GMOrphanedFiles(".\\project\\scripts", ".gml");
-		gmoScripts.searchAll();
+		ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
+		
+		GMOrphanedFiles gmoScripts=new GMOrphanedFiles(SCRIPT_FOLDER, ".gml");
+		gmoScripts.searchAll(allScripts);
 	}
 
 	private static ArrayList<GMFile> allFiles(String folderName, String extension){
@@ -45,18 +49,16 @@ public class GMOrphanedFiles {
 		}
 	}
 	
-	private void searchAll(){
+	private void searchAll(ArrayList<GMFile> allScripts){
 		ArrayList<GMFile> all=allFiles(assetFolderName, extension);
 		for (GMFile gmf : all){
-			if (!inUseInScripts(gmf)){
+			if (!inUseInScripts(gmf, allScripts)){
 				System.out.println(gmf.getName()+" isn't in use in a script, as far as we can tell");
 			}
 		}
 	}
 	
-	private boolean inUseInScripts(GMFile asset){
-		final String SCRIPT_FOLDER=".\\project\\scripts";
-		ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
+	private boolean inUseInScripts(GMFile asset, ArrayList<GMFile> allScripts){
 		String assetName=asset.getAssetName();
 		
 		for (GMFile script : allScripts){
