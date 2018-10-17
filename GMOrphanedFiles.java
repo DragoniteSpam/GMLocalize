@@ -7,12 +7,18 @@ import java.io.FileNotFoundException;
 
 public class GMOrphanedFiles {
 	private static final String SCRIPT_FOLDER=".\\project\\scripts";
+	private static final String OBJECT_FOLDER=".\\project\\objects";
+	
+	private static final String TRIPLE_SLASH_COMMENT="///";
+	private static final String XML_BEGIN_CODE="<string>";
+	private static final String XML_END_CODE="</string>";
 	
 	public static void main(String[] args) throws IOException {
 		ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
+		ArrayList<GMFile> allObjects=allFiles(OBJECT_FOLDER, ".object.gmx");
 		
 		GMOrphanedFiles gmoScripts=new GMOrphanedFiles(SCRIPT_FOLDER, ".gml");
-		gmoScripts.searchAll(allScripts);
+		gmoScripts.searchAll(allScripts, allObjects);
 	}
 
 	private static ArrayList<GMFile> allFiles(String folderName, String extension){
@@ -49,11 +55,14 @@ public class GMOrphanedFiles {
 		}
 	}
 	
-	private void searchAll(ArrayList<GMFile> allScripts){
+	private void searchAll(ArrayList<GMFile> allScripts, ArrayList<GMFile> allObjects){
 		ArrayList<GMFile> all=allFiles(assetFolderName, extension);
 		for (GMFile gmf : all){
-			if (!inUseInScripts(gmf, allScripts)){
-				System.out.println(gmf.getName()+" isn't in use in a script, as far as we can tell");
+			inUseInScripts(gmf, allScripts);
+			inUseInObjects(gmf, allObjects);
+			
+			if (!gmf.isInUse()){
+				System.out.println(gmf.getAssetName()+" isn't in use anywhere, as far as we can tell");
 			}
 		}
 	}
@@ -68,8 +77,9 @@ public class GMOrphanedFiles {
 				String line;
 				
 				while ((line=bufferedReader.readLine())!=null){
-					if (line.contains(assetName)){
-						script.find();
+					if (line.contains(assetName)&&!line.startsWith(TRIPLE_SLASH_COMMENT)){
+						asset.find();
+						//System.out.println(asset.getAssetName()+" was found in the script code of "+script.getAssetName());
 						return true;
 					}
 				}
@@ -77,6 +87,42 @@ public class GMOrphanedFiles {
 				System.err.println("Didn't find the file: "+script.getName());
 			} catch (IOException e){
 				System.err.println("Something went wrong in: "+script.getName());
+			}
+		}
+		return false;
+	}
+	
+	private boolean inUseInObjects(GMFile asset, ArrayList<GMFile> allObjects){
+		String assetName=asset.getAssetName();
+		
+		for (GMFile object : allObjects){
+			try {
+				FileReader reader=new FileReader(OBJECT_FOLDER+"\\"+object.getName());
+				BufferedReader bufferedReader=new BufferedReader(reader);
+				String line;
+				
+				boolean inCode=false;
+				while ((line=bufferedReader.readLine())!=null){
+					if (line.contains(XML_END_CODE)){
+						inCode=false;
+					}
+					if (line.contains(XML_BEGIN_CODE)){
+						inCode=true;
+					}
+					// code starts on the same line as the <script> tag does
+					if (inCode){
+						//System.out.println(line);
+						if (line.contains(assetName)&&!line.startsWith(TRIPLE_SLASH_COMMENT)){
+							asset.find();
+							//System.out.println(asset.getAssetName()+" was found in the object code of "+object.getAssetName());
+							return true;
+						}
+					}
+				}
+			} catch (FileNotFoundException e){
+				System.err.println("Didn't find the file: "+object.getName());
+			} catch (IOException e){
+				System.err.println("Something went wrong in: "+object.getName());
 			}
 		}
 		return false;

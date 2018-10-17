@@ -26,14 +26,4 @@ public class GMFile extends File {
 	public String getAssetName(){
 		return this.assetName;
 	}
-	
-	/*public GMFile[] listFiles(){
-		File[] original=super.listFiles();
-		GMFile[] wrapperFiles=new GMFile[original.length];
-		for (int i=0; i<original.length; i++){
-			wrapperFiles[i]=new GMFile(original[i]);
-		}
-		
-		return wrapperFiles;
-	}*/
 }
