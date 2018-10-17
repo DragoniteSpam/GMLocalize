@@ -11,12 +11,12 @@ public class GMOrphanedFiles {
 		gmoScripts.searchAll();
 	}
 
-	private static ArrayList<File> allFiles(String folderName, String extension){
+	private static ArrayList<GMFile> allFiles(String folderName, String extension){
 		File folder=new File(folderName);
-		ArrayList<File> list=new ArrayList<File>();
+		ArrayList<GMFile> list=new ArrayList<GMFile>();
 		for (File entry : folder.listFiles()){
 			if (!entry.isDirectory()&&entry.getName().endsWith(extension)){
-				list.add(entry);
+				list.add(new GMFile(entry, folderName, extension));
 			}
 		}
 		return list;
@@ -46,28 +46,29 @@ public class GMOrphanedFiles {
 	}
 	
 	private void searchAll(){
-		ArrayList<File> all=allFiles(assetFolderName, extension);
-		for (File f : all){
-			String assetName=f.getName().replace(assetFolderName, "").replace(extension, "");
-			if (!inUseInScripts(assetName)){
-				//System.out.println(f.getName()+" isn't in use in a script, as far as we can tell");
+		ArrayList<GMFile> all=allFiles(assetFolderName, extension);
+		for (GMFile gmf : all){
+			if (!inUseInScripts(gmf)){
+				System.out.println(gmf.getName()+" isn't in use in a script, as far as we can tell");
 			}
 		}
 	}
 	
-	private boolean inUseInScripts(String assetName){
-		ArrayList<File> allScripts=allFiles(".\\project\\scripts", ".gml");
+	private boolean inUseInScripts(GMFile asset){
+		final String SCRIPT_FOLDER=".\\project\\scripts";
+		ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
+		String assetName=asset.getAssetName();
 		
-		for (File script : allScripts){
+		for (GMFile script : allScripts){
 			try {
-				FileReader reader=new FileReader(script);
+				FileReader reader=new FileReader(SCRIPT_FOLDER+"\\"+script.getName());
 				BufferedReader bufferedReader=new BufferedReader(reader);
 				String line;
 				
 				while ((line=bufferedReader.readLine())!=null){
 					if (line.contains(assetName)){
-						System.out.println(assetName+" is in use in this script: "+script.getName());
-						break;
+						script.find();
+						return true;
 					}
 				}
 			} catch (FileNotFoundException e){
