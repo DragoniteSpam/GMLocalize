@@ -1,0 +1,1 @@
+jar cmf GMOrphanedFiles.mf gmof-x.x.jar GMOrphanedFiles.class GMOrphanedFiles.java assets

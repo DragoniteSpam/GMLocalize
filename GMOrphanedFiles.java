@@ -18,18 +18,44 @@ public class GMOrphanedFiles {
         }
         
         for (String projectName : args){
+            System.out.println("-----------------------------");
+            System.out.println(projectName);
+            System.out.println("-----------------------------");
+            
             GM1Project rootProject1=GM1Project.autoDetect(projectName);
             
             if (rootProject1==null/*&&rootProject2==null*/){
-                System.err.println("Couldn't find a Game Maker Studio (1 or 2) project file in the specified folder. "+
+                System.err.println("We couldn't find a Game Maker Studio (1 or 2) project file in the specified folder. "+
                     "Are you sure you're checking the right one?");
-                System.exit(0);
             }
             
             if (rootProject1!=null){
                 assesGM1Project(projectName, rootProject1);
             }
+            
+            
+            //if (rootProject2!=null){
+            //}
         }
+        
+        System.out.println();
+        System.out.println("-----------------------------");
+        System.out.println();
+        System.out.println("There may be more orphaned assets that we haven't been able to find: if "+
+            "scr_foo calls scr_bar and scr_bar calls scr_foo, and neither of them are called from "+
+            "anywhere else, we're not smart enough to detect that the script is never actually used.");
+        System.out.println();
+        System.out.println("Additionally, assets that are referenced by name in comments or strings "+
+            "will still be marked as \"in use,\" even though they're actually not.");
+        System.out.println();
+        System.out.println("There may also be some assets that do get used, but not detected: for "+
+            "example, if you refer to a sprite by its index instead of its asset name (which is a bad "+
+            "idea), or if you were to retrieve the asset through asset_get_name with a compound string "+
+            "(which is also a bad idea), we won't be able to tell.");
+        System.out.println();
+        
+        System.out.println("(Hit Enter to quit.)");
+        new Scanner(System.in).nextLine();
 	}
     
     public static void assesGM1Project(String directory, GM1Project rootProject){
@@ -243,23 +269,6 @@ public class GMOrphanedFiles {
                 "out and \"forgot\" to rename/remove a file even though it was supposed to, you may "+
                 "still see it listed here. In that case, it's probably safe to delete.");
         }
-        
-        System.out.println();
-        System.out.println("There may be more orphaned assets that we haven't been able to find: if "+
-            "scr_foo calls scr_bar and scr_bar calls scr_foo, and neither of them are called from "+
-            "anywhere else, we're not smart enough to detect that the script is never actually used.");
-        System.out.println();
-        System.out.println("Additionally, assets that are referenced by name in comments or strings "+
-            "will still be marked as \"in use,\" even though they're actually not.");
-        System.out.println();
-        System.out.println("There may also be some assets that do get used, but not detected: for "+
-            "example, if you refer to a sprite by its index instead of its asset name (which is a bad "+
-            "idea), or if you were to retrieve the asset through asset_get_name with a compound string "+
-            "(which is also a bad idea), we won't be able to tell.");
-        System.out.println();
-        
-        System.out.println("(Hit Enter to quit.)");
-        new Scanner(System.in).nextLine();
     }
     
     public static void searchCode(ArrayList<GM1File> assets, HashMap<String, String> code){
