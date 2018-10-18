@@ -24,8 +24,21 @@ public class GMAssetType {
 	
 	public void searchAll(ArrayList<GMFile> allScripts, ArrayList<GMFile> allObjects,
 				ArrayList<GMFile> allRooms, ArrayList<GMFile> allTimelines){
+		searchAll(allScripts, allObjects, allRooms, allTimelines, null);
+	}
+	
+	public void searchAll(ArrayList<GMFile> allScripts, ArrayList<GMFile> allObjects,
+				ArrayList<GMFile> allRooms, ArrayList<GMFile> allTimelines, ArrayList<String> toIgnore){
 		ArrayList<GMFile> all=myFiles();
+		
 		for (GMFile gmf : all){
+			if (toIgnore!=null){
+				for (String ignore : toIgnore){
+					if (gmf.getAssetName().equals(ignore)){
+						return;
+					}
+				}
+			}
 			inUseInScripts(gmf, allScripts);
 			inUseInObjects(gmf, allObjects);
 			inUseInRooms(gmf, allRooms);

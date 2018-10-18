@@ -65,7 +65,9 @@ public class GMOrphanedFiles {
 		
 		try {
 			GMAssetType gmoRooms=new GMAssetType(ROOM_FOLDER, ".room.gmx");
-			gmoRooms.searchAll(allScripts, allObjects, allRooms, allTimelines);
+			// we don't check the first room because the game automatically enters it
+			// when you start it up, and it doesn't need to be called from anywhere else
+			gmoRooms.searchAll(allScripts, allObjects, allRooms, allTimelines, GMProjectFile.getPrimaryRoom());
 		} catch (FileNotFoundException e){
 			System.err.println(" *** There aren't any Rooms resources (you should change that, your game won't run without them)");
 		}
@@ -108,6 +110,8 @@ public class GMOrphanedFiles {
 		}
 		
 		// Enums
+		
+		ArrayList<String> allCode=allProjectCode();
 	}
 
 	public static ArrayList<GMFile> allFiles(String folderName, String extension){
@@ -121,5 +125,18 @@ public class GMOrphanedFiles {
 			}
 		}
 		return list;
+	}
+	
+	public static ArrayList<String> allProjectCode(){
+		ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
+		ArrayList<GMFile> allObjects=allFiles(OBJECT_FOLDER, ".gml");
+		ArrayList<GMFile> allRooms=allFiles(ROOM_FOLDER, ".gml");
+		ArrayList<GMFile> allTimelines=allFiles(TIMELINE_FOLDER, ".gml");
+		
+		throw new NotImplementedException("finish this please");
+		
+		ArrayList<String> code=new ArrayList<String>();
+		
+		return code;
 	}
 }
