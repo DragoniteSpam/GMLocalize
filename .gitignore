@@ -23,4 +23,7 @@
 hs_err_pid*
 
 # No need to deal with the files of the test project
-project/
+project.gmx/
+
+# Files that we probably don't need anymore (refactoring, etc)
+discard/
