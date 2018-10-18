@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 import java.io.*;
 import org.w3c.dom.*;
@@ -34,18 +36,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1File> assets=new ArrayList<GM1File>();
         ArrayList<String> assetsInUse=new ArrayList<String>();
         ArrayList<String> code=new ArrayList<String>();
+        HashMap<String, String> codeTokens;
         
-        /*
-         * Macros
-         */
-        ArrayList<String> allMacroNames=rootProject.allMacros();
-        code.addAll(rootProject.allMacroCode());
-        ArrayList<GM1Macro> macros=new ArrayList<GM1Macro>();
-        for (String n : allMacroNames){
-            GM1Macro m=new GM1Macro(n);
-            macros.add(m);
-            assets.add(m);
-        }
         
         /*
          * Backgrounds
@@ -186,11 +178,37 @@ public class GMOrphanedFiles {
         }
         
         /*
+         * Other things
+         * These aren't asset files but you might want to know about them
+         * all the same
+         */
+        
+        /*
+         * Macros
+         */
+        ArrayList<String> allMacroNames=rootProject.allMacros();
+        code.addAll(rootProject.allMacroCode());
+        ArrayList<GM1Macro> macros=new ArrayList<GM1Macro>();
+        for (String n : allMacroNames){
+            GM1Macro m=new GM1Macro(n);
+            macros.add(m);
+            assets.add(m);
+        }
+        
+        /*
+         * Decided against doing enums, since the way I've structured the code
+         * (both the Java and the GML) makes it hard to tell the difference between
+         * declaring an enum and using one
+         */
+        
+        /*
          * Configs don't contain anything useful to us, at least as far as I know.
          * We could do datafiles too, but since they can only be accessed as strings
          * and strings can be broken up (file_text_open_read("folder"+"\"+"filename"))
          * it feels kind of futile.
          */
+        
+        codeTokens=findAllCodeTokens(code);
         
         mark(assets, rootProject.startingRoom());
         
@@ -198,18 +216,55 @@ public class GMOrphanedFiles {
             mark(assets, name);
         }
         
-        searchCode(assets, code);
+        searchCode(assets, codeTokens);
         
+        int n=0;
+        System.out.println("The following all appear to be orphaned assets:");
         for (GM1File f : assets){
             if (!f.isInUse()){
-                System.out.println("We didn't find "+f.getTypeName()+": "+f.getAssetName());
+                System.out.println("\t"+f.getTypeName()+": "+f.getAssetName());
+                n++;
             }
         }
+        if (n==0){
+            System.out.println("\t(none found)");
+        } else {
+            System.out.println();
+            System.out.println("NOTHING HAS BEEN AUTOMATICALLY DELETED. You may wish to have a look "+
+                "at each of the assets individually and decide for yourself if you still need them.");
+            System.out.println();
+            System.out.println("I would highly suggest using source control or at least making a backup "+
+                "of your project if you're unsure about deleting something that can't be easily replaced.");
+            System.out.println();
+            System.out.println("Not all assets listed are necessarily part of your Game Maker project. "+
+                "If you manually added appropriately-named resources to one of the folders without "+
+                "correctly adding them to Game Maker, or if you previously deleted an asset without "+
+                "having Game Maker set to delete removed files from the disk, or if Game Maker bugged "+
+                "out and \"forgot\" to rename/remove a file even though it was supposed to, you may "+
+                "still see it listed here. In that case, it's probably safe to delete.");
+        }
+        
+        System.out.println();
+        System.out.println("There may be more orphaned assets that we haven't been able to find: if "+
+            "scr_foo calls scr_bar and scr_bar calls scr_foo, and neither of them are called from "+
+            "anywhere else, we're not smart enough to detect that the script is never actually used.");
+        System.out.println();
+        System.out.println("Additionally, assets that are referenced by name in comments or strings "+
+            "will still be marked as \"in use,\" even though they're actually not.");
+        System.out.println();
+        System.out.println("There may also be some assets that do get used, but not detected: for "+
+            "example, if you refer to a sprite by its index instead of its asset name (which is a bad "+
+            "idea), or if you were to retrieve the asset through asset_get_name with a compound string "+
+            "(which is also a bad idea), we won't be able to tell.");
+        System.out.println();
+        
+        System.out.println("(Hit Enter to quit.)");
+        new Scanner(System.in).nextLine();
     }
     
-    public static void searchCode(ArrayList<GM1File> assets, ArrayList<String> code){
+    public static void searchCode(ArrayList<GM1File> assets, HashMap<String, String> code){
         for (GM1File f : assets){
-            if (!f.isInUse()&&f.search(code)){
+            if (!f.isInUse()&&code.containsKey(f.getAssetName())){
                 f.find();
             }
         }
@@ -220,7 +275,7 @@ public class GMOrphanedFiles {
         for (GM1File f : assets){
             if (f.getAssetName().equals(name)){
                 if (found){
-                    warn("You have duplicate asset(s) named "+name+". Normally Game Maker does not allow this. You should resolve that.");
+                    System.err.println("You have duplicate asset(s) named "+name+". Normally Game Maker does not allow this. You should resolve that.");
                 }
                 found=true;
                 f.find();
@@ -228,12 +283,18 @@ public class GMOrphanedFiles {
         }
     }
     
-    public static void warn(Object message){
-        System.err.println(message);
-    }
-    
-    public static String[] codeSplit(String code){
-        ArrayList<String> terms=new ArrayList<String>();
-        return null;
+    public static HashMap<String, String> findAllCodeTokens(ArrayList<String> code){
+        HashMap<String, String> tokens=new HashMap<String, String>();
+        
+        for (String section : code){
+            String[] each=section.split("[ \\-+*/%=&\\|^!~.,<>{}()\\[\\];?:#@]");
+            for (String s : each){
+                if (!tokens.containsKey(s)){
+                    tokens.put(s, s);
+                }
+            }
+        }
+        
+        return tokens;
     }
 }

@@ -56,19 +56,6 @@ public class GM1File extends File {
         throw new UnsupportedOperationException("GM1File.getTypeName() is only implemented in its child classes. It's supposed to be abstract, but Java doesn't allow that.");
     }
     
-    public boolean search(ArrayList<String> code){
-        for (String codeString : code){
-            String[] terms=codeString.split("[ \\-+*/%=&\\|^!~.,<>{}()\\[\\];?:#@]");
-            for (String term : terms){
-                if (term.equals(getAssetName())){
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
     private final Document parseXMLDocument(){
         if (!exists()||!isXML){
             return null;

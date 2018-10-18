@@ -19,6 +19,8 @@
 *.tar.gz
 *.rar
 
+example.bat
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
@@ -27,3 +29,6 @@ project.gmx/
 
 # Files that we probably don't need anymore (refactoring, etc)
 discard/
+
+# I don't know how distributing jars work so I test stuff in here
+test/
