@@ -97,6 +97,27 @@ public class GMOrphanedFiles {
         }
         
         /*
+         * Paths
+         */
+        ArrayList<String> allPathAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Path> paths=GM1Path.allFiles(directory);
+        for (GM1Path path : paths){
+            allPathAssets.add(path.getAssetName());
+            // Paths also have a "backroom" element, which is presumably the
+            // index of the room that's used as the background, but becuse we
+            // all love consistancy it's saved as an integer index and not an
+            // asset name and that makes it quite difficult to tell which room
+            // is actually being used, since this program iterates over each
+            // file in the folder and not the entry in the project file, and
+            // the operating system stores the files in alphabetical order.
+            
+            // That's the long way of me saying I'm not going to detect backgrounds
+            // that are only in use for positioning paths. Why are you using paths,
+            // anyway?
+        }
+        
+        /*
          * Rooms
          */
         ArrayList<String> allRoomAssets=new ArrayList<String>();
@@ -117,6 +138,26 @@ public class GMOrphanedFiles {
         ArrayList<GM1Script> scripts=GM1Script.allFiles(directory);
         for (GM1Script script : scripts){
             allScriptAssets.add(script.getAssetName());
+        }
+        
+        /*
+         * Shaders
+         */
+        ArrayList<String> allShaderAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Shader> shaders=GM1Shader.allFiles(directory);
+        for (GM1Shader shader : shaders){
+            allShaderAssets.add(shader.getAssetName());
+        }
+        
+        /*
+         * Sound
+         */
+        ArrayList<String> allSoundAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Sound> sounds=GM1Sound.allFiles(directory);
+        for (GM1Sound sound : sounds){
+            allSoundAssets.add(sound.getAssetName());
         }
         
         /*
