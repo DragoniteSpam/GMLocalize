@@ -119,4 +119,21 @@ public class GM1File extends File {
         
         return strings;
     }
+    
+    protected ArrayList<String> xmlGetDefaultValues(String outerName, String innerName){
+        ArrayList<String> strings=new ArrayList<String>();
+        
+        NodeList outer=document.getElementsByTagName(outerName);
+        for (int i=0; i<outer.getLength(); i++){
+            NodeList inner=((Element)outer.item(i)).getElementsByTagName(innerName);
+            for (int j=0; j<inner.getLength(); j++){
+                String content=((Element)inner.item(j)).getTextContent();
+                if (content.length()>0){
+                    strings.add(content);
+                }
+            }
+        }
+        
+        return strings;
+    }
 }

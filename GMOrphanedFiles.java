@@ -36,15 +36,6 @@ public class GMOrphanedFiles {
         }
         
         for (String projectName : args){
-            /*ArrayList<GMFile> allProjects=allFiles(ROOT_FOLDER, ".project.gmx");
-            
-            ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
-            ArrayList<GMFile> allObjects=allFiles(OBJECT_FOLDER, ".object.gmx");
-            ArrayList<GMFile> allRooms=allFiles(ROOM_FOLDER, ".room.gmx");
-            ArrayList<GMFile> allTimelines=allFiles(TIMELINE_FOLDER, ".timeline.gmx");*/
-            
-            //allProjectCode();
-            
             GM1Project rootProject1=GM1Project.autoDetect(projectName);
             
             if (rootProject1==null/*&&rootProject2==null*/){
@@ -60,17 +51,59 @@ public class GMOrphanedFiles {
 	}
     
     public static void assesGM1Project(String directory, GM1Project rootProject){
+        ArrayList<String> assetsInUse=new ArrayList<String>();
+        ArrayList<String> code=new ArrayList<String>();
+        
         String startingRoomName=rootProject.startingRoom();
-        String code=null;
-        StringBuilder codeBuilder=new StringBuilder();
+        assetsInUse.add(startingRoomName);
+        
+        /*
+         * Macros
+         */
+        ArrayList<String> allMacroNames=rootProject.allMacros();
+        code.addAll(rootProject.allMacroCode());
+        
+        /*
+         * Backgrounds
+         */
+        ArrayList<String> allBackgroundAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Background> backgrounds=GM1Background.allFiles(directory);
+        for (GM1Background background : backgrounds){
+            allBackgroundAssets.add(background.getAssetName());
+        }
+        
+        /*
+         * Rooms
+         */
+        ArrayList<String> allRoomAssets=new ArrayList<String>();
         
         ArrayList<GM1Room> rooms=GM1Room.allFiles(directory);
         for (GM1Room room : rooms){
-            codeBuilder.append(room.creationCode());
-            ArrayList<String> roomInstances=room.allInstances();
-            ArrayList<String> roomBackgrounds=room.allBackgrounds();
+            allRoomAssets.add(room.getAssetName());
+            code.add(room.creationCode());
+            assetsInUse.addAll(room.allInstances());
+            assetsInUse.addAll(room.allBackgrounds());
         }
         
-        code=codeBuilder.toString();
+        /*
+         * Scripts
+         */
+        ArrayList<String> allScriptAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Script> scripts=GM1Script.allFiles(directory);
+        for (GM1Script script : scripts){
+            allScriptAssets.add(script.getAssetName());
+        }
+        
+        /*
+         * Sprites
+         */
+        ArrayList<String> allSpriteAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Sprite> sprites=GM1Sprite.allFiles(directory);
+        for (GM1Sprite sprite : sprites){
+            allSpriteAssets.add(sprite.getAssetName());
+        }
     }
 }

@@ -1,5 +1,7 @@
 package assets.gm1;
 
+import java.util.ArrayList;
+
 import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
@@ -40,5 +42,13 @@ public class GM1Project extends GM1File {
         }
         
         return actualRoomNodeList.item(0).getTextContent().replace("rooms\\", "");
+    }
+    
+    public ArrayList<String> allMacros(){
+        return xmlGetDefaultAttributes("constants", "constant", "name");
+    }
+    
+    public ArrayList<String> allMacroCode(){
+        return xmlGetDefaultValues("constants", "constant");
     }
 }
