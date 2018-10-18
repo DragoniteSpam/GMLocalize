@@ -66,21 +66,6 @@ public class GMProjectFile extends GMAssetType {
 		return macros;
 	}
 	
-	/*public void searchAll(ArrayList<GMFile> allScripts, ArrayList<GMFile> allObjects,
-				ArrayList<GMFile> allRooms, ArrayList<GMFile> allTimelines){
-		ArrayList<GMFile> all=macrosToGMFiles();
-		for (GMFile gmf : all){
-			inUseInScripts(gmf, allScripts);
-			inUseInObjects(gmf, allObjects);
-			inUseInRooms(gmf, allRooms);
-			inUseInTimelines(gmf, allTimelines);
-			
-			if (!gmf.isInUse()){
-				System.out.println(gmf.getAssetName()+" isn't in use anywhere, as far as we can tell");
-			}
-		}
-	}*/
-	
 	protected ArrayList<GMFile> myFiles(){
 		ArrayList<GMFile> files=new ArrayList<GMFile>();
 		// These aren't files, but we treat them as such so we don't have to re-write more code.
@@ -90,4 +75,6 @@ public class GMProjectFile extends GMAssetType {
 		
 		return files;
 	}
+	
+	public static ArrayList<String> getPrimaryRoom(GMAsset rooms)
 }
