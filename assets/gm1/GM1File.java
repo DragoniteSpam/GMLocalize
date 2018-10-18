@@ -1,6 +1,7 @@
 package assets.gm1;
 
 import java.util.ArrayList;
+import java.lang.UnsupportedOperationException;
 
 import java.io.*;
 import org.w3c.dom.*;
@@ -8,6 +9,7 @@ import javax.xml.parsers.*;
 
 public class GM1File extends File {
     protected static final String GMS1_EXTENSION=".gmx";
+    protected static String typeName="File";
 	
 	private boolean inUse;
 	private String assetName;
@@ -30,11 +32,11 @@ public class GM1File extends File {
         this.plainText=readPlainText();
 	}
 	
-	public boolean isInUse(){
+	public final boolean isInUse(){
 		return this.inUse;
 	}
 	
-	public void find(){
+	public final void find(){
 		this.inUse=true;
 	}
 	
@@ -48,6 +50,23 @@ public class GM1File extends File {
     
     public String getPlainText(){
         return this.plainText;
+    }
+    
+    public String getTypeName(){
+        throw new UnsupportedOperationException("GM1File.getTypeName() is only implemented in its child classes. It's supposed to be abstract, but Java doesn't allow that.");
+    }
+    
+    public boolean search(ArrayList<String> code){
+        for (String codeString : code){
+            String[] terms=codeString.split("[ \\-+*/%=&\\|^!~.,<>{}()\\[\\];?:#@]");
+            for (String term : terms){
+                if (term.equals(getAssetName())){
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     private final Document parseXMLDocument(){

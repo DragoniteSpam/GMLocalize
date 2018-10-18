@@ -9,10 +9,15 @@ import javax.xml.parsers.*;
 public class GM1Project extends GM1File {
     private static final String FOLDER=".\\";
     private static final String EXTENSION=".project.gmx";
+    protected static String typeName="Project";
     
 	public GM1Project(String absolutePath){
 		super(absolutePath, true);
 	}
+    
+    public String getTypeName(){
+        return typeName;
+    }
     
     public static GM1Project autoDetect(String directory){
 		File folder=new File(directory);

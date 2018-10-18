@@ -35,8 +35,6 @@ public class GMOrphanedFiles {
         ArrayList<String> assetsInUse=new ArrayList<String>();
         ArrayList<String> code=new ArrayList<String>();
         
-        String startingRoomName=rootProject.startingRoom();
-        
         /*
          * Macros
          */
@@ -96,7 +94,6 @@ public class GMOrphanedFiles {
         ArrayList<GM1Path> paths=GM1Path.allFiles(directory);
         for (GM1Path path : paths){
             allPathAssets.add(path.getAssetName());
-            
             assets.add(path);
             // Paths also have a "backroom" element, which is presumably the
             // index of the room that's used as the background, but becuse we
@@ -194,9 +191,49 @@ public class GMOrphanedFiles {
          * and strings can be broken up (file_text_open_read("folder"+"\"+"filename"))
          * it feels kind of futile.
          */
-         
-        for (GM1File f : assets){
-            System.out.println(f.getAssetName());
+        
+        mark(assets, rootProject.startingRoom());
+        
+        for (String name : assetsInUse){
+            mark(assets, name);
         }
+        
+        searchCode(assets, code);
+        
+        for (GM1File f : assets){
+            if (!f.isInUse()){
+                System.out.println("We didn't find "+f.getTypeName()+": "+f.getAssetName());
+            }
+        }
+    }
+    
+    public static void searchCode(ArrayList<GM1File> assets, ArrayList<String> code){
+        for (GM1File f : assets){
+            if (!f.isInUse()&&f.search(code)){
+                f.find();
+            }
+        }
+    }
+    
+    public static void mark(ArrayList<GM1File> assets, String name){
+        boolean found=false;
+        for (GM1File f : assets){
+            if (f.getAssetName().equals(name)){
+                if (found){
+                    warn("You have duplicate asset(s) named "+name+". Normally Game Maker does not allow this. You should resolve that.");
+                }
+                found=true;
+                f.find();
+            }
+        }
+    }
+    
+    public static void warn(Object message){
+        System.err.println(message);
+    }
+    
+    public static String[] codeSplit(String code){
+        ArrayList<String> terms=new ArrayList<String>();
+        return null;
     }
 }

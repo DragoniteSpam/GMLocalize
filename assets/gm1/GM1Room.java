@@ -11,10 +11,15 @@ import javax.xml.parsers.*;
 public class GM1Room extends GM1File {
     private static final String FOLDER=".\\rooms";
     private static final String EXTENSION=".room.gmx";
+    protected static String typeName="Room";
     
 	public GM1Room(String absolutePath){
 		super(absolutePath, true);
 	}
+    
+    public String getTypeName(){
+        return typeName;
+    }
     
     public String creationCode(){
         StringBuilder codeBuilder=new StringBuilder();

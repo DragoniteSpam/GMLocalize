@@ -11,10 +11,15 @@ import javax.xml.parsers.*;
 public class GM1Timeline extends GM1File {
     private static final String FOLDER=".\\timelines";
     private static final String EXTENSION=".timeline.gmx";
+    protected static String typeName="Timeline";
     
 	public GM1Timeline(String absolutePath){
 		super(absolutePath, true);
 	}
+    
+    public String getTypeName(){
+        return typeName;
+    }
     
     public static ArrayList<GM1Timeline> allFiles(String directory){
 		File folder=new File(directory+FOLDER);

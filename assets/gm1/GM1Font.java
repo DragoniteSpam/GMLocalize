@@ -9,13 +9,18 @@ import javax.xml.parsers.*;
 public class GM1Font extends GM1File {
     private static final String FOLDER=".\\fonts";
     private static final String EXTENSION=".font.gmx";
+    protected static String typeName="Font";
     
 	public GM1Font(String absolutePath){
 		super(absolutePath, true);
 	}
     
+    public String getTypeName(){
+        return typeName;
+    }
+    
     public static ArrayList<GM1Font> allFiles(String directory){
-		File folder=new File(directory);
+		File folder=new File(directory+FOLDER);
 		ArrayList<GM1Font> list=new ArrayList<GM1Font>();
 		if (folder.exists()){
 			for (File entry : folder.listFiles()){

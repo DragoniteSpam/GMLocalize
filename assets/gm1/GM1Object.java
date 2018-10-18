@@ -11,10 +11,15 @@ import javax.xml.parsers.*;
 public class GM1Object extends GM1File {
     private static final String FOLDER=".\\objects";
     private static final String EXTENSION=".object.gmx";
+    protected static String typeName="Object";
     
 	public GM1Object(String absolutePath){
 		super(absolutePath, true);
 	}
+    
+    public String getTypeName(){
+        return typeName;
+    }
     
     public static ArrayList<GM1Object> allFiles(String directory){
 		File folder=new File(directory+FOLDER);
