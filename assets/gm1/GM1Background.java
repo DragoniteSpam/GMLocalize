@@ -11,7 +11,7 @@ public class GM1Background extends GM1File {
     private static final String EXTENSION=".background.gmx";
     
 	public GM1Background(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static ArrayList<GM1Background> allFiles(String directory){

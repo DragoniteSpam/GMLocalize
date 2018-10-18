@@ -11,11 +11,11 @@ public class GM1Script extends GM1File {
     private static final String EXTENSION=".gml";
     
 	public GM1Script(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, false);
 	}
     
     public static ArrayList<GM1Script> allFiles(String directory){
-		File folder=new File(directory);
+		File folder=new File(directory+FOLDER);
 		ArrayList<GM1Script> list=new ArrayList<GM1Script>();
 		if (folder.exists()){
 			for (File entry : folder.listFiles()){

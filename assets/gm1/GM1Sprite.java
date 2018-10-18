@@ -11,7 +11,7 @@ public class GM1Sprite extends GM1File {
     private static final String EXTENSION=".sprite.gmx";
     
 	public GM1Sprite(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static ArrayList<GM1Sprite> allFiles(String directory){

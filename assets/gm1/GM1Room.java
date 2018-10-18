@@ -13,7 +13,7 @@ public class GM1Room extends GM1File {
     private static final String EXTENSION=".room.gmx";
     
 	public GM1Room(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public String creationCode(){

@@ -13,7 +13,7 @@ public class GM1Timeline extends GM1File {
     private static final String EXTENSION=".timeline.gmx";
     
 	public GM1Timeline(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static ArrayList<GM1Timeline> allFiles(String directory){

@@ -13,7 +13,7 @@ public class GM1Object extends GM1File {
     private static final String EXTENSION=".object.gmx";
     
 	public GM1Object(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static ArrayList<GM1Object> allFiles(String directory){

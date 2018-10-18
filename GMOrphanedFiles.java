@@ -7,26 +7,6 @@ import javax.xml.parsers.*;
 import assets.gm1.*;
 
 public class GMOrphanedFiles {
-	public static final String ROOT_FOLDER=".\\project";
-	
-	public static final String BACKGROUND_FOLDER=".\\project\\background";
-	public static final String FONT_FOLDER=".\\project\\fonts";
-	public static final String OBJECT_FOLDER=".\\project\\objects";
-	public static final String PATH_FOLDER=".\\project\\paths";
-	public static final String ROOM_FOLDER=".\\project\\rooms";
-	public static final String SCRIPT_FOLDER=".\\project\\scripts";
-    public static final String SHADER_FOLDER=".\\project\\shaders";
-	public static final String SOUND_FOLDER=".\\project\\sound";
-	public static final String SPRITE_FOLDER=".\\project\\sprites";
-	public static final String TIMELINE_FOLDER=".\\project\\timelines";
-	
-	public static final String TRIPLE_SLASH_COMMENT="///";
-	public static final String XML_BEGIN_OBJECT_CODE="<string>";
-	public static final String XML_END_OBJECT_CODE="</string>";
-	// Because why would the tags for object code and room code be the same.
-	public static final String XML_BEGIN_ROOM_CODE="<code>";
-	public static final String XML_END_ROOM_CODE="</code>";
-	
 	public static void main(String[] args) throws IOException {
         if (args.length==0){
             System.out.println("Incorrect use: use ");
@@ -51,17 +31,23 @@ public class GMOrphanedFiles {
 	}
     
     public static void assesGM1Project(String directory, GM1Project rootProject){
+        ArrayList<GM1File> assets=new ArrayList<GM1File>();
         ArrayList<String> assetsInUse=new ArrayList<String>();
         ArrayList<String> code=new ArrayList<String>();
         
         String startingRoomName=rootProject.startingRoom();
-        assetsInUse.add(startingRoomName);
         
         /*
          * Macros
          */
         ArrayList<String> allMacroNames=rootProject.allMacros();
         code.addAll(rootProject.allMacroCode());
+        ArrayList<GM1Macro> macros=new ArrayList<GM1Macro>();
+        for (String n : allMacroNames){
+            GM1Macro m=new GM1Macro(n);
+            macros.add(m);
+            assets.add(m);
+        }
         
         /*
          * Backgrounds
@@ -71,6 +57,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Background> backgrounds=GM1Background.allFiles(directory);
         for (GM1Background background : backgrounds){
             allBackgroundAssets.add(background.getAssetName());
+            
+            assets.add(background);
         }
         
         /*
@@ -81,6 +69,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Font> fonts=GM1Font.allFiles(directory);
         for (GM1Font font : fonts){
             allFontAssets.add(font.getAssetName());
+            
+            assets.add(font);
         }
         
         /*
@@ -94,6 +84,8 @@ public class GMOrphanedFiles {
             assetsInUse.addAll(object.allObjects());
             assetsInUse.addAll(object.allSprites());
             code.add(object.code());
+            
+            assets.add(object);
         }
         
         /*
@@ -104,6 +96,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Path> paths=GM1Path.allFiles(directory);
         for (GM1Path path : paths){
             allPathAssets.add(path.getAssetName());
+            
+            assets.add(path);
             // Paths also have a "backroom" element, which is presumably the
             // index of the room that's used as the background, but becuse we
             // all love consistancy it's saved as an integer index and not an
@@ -128,6 +122,8 @@ public class GMOrphanedFiles {
             code.add(room.creationCode());
             assetsInUse.addAll(room.allInstances());
             assetsInUse.addAll(room.allBackgrounds());
+            
+            assets.add(room);
         }
         
         /*
@@ -138,6 +134,9 @@ public class GMOrphanedFiles {
         ArrayList<GM1Script> scripts=GM1Script.allFiles(directory);
         for (GM1Script script : scripts){
             allScriptAssets.add(script.getAssetName());
+            code.add(script.getPlainText());
+            
+            assets.add(script);
         }
         
         /*
@@ -148,6 +147,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Shader> shaders=GM1Shader.allFiles(directory);
         for (GM1Shader shader : shaders){
             allShaderAssets.add(shader.getAssetName());
+            
+            assets.add(shader);
         }
         
         /*
@@ -158,6 +159,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Sound> sounds=GM1Sound.allFiles(directory);
         for (GM1Sound sound : sounds){
             allSoundAssets.add(sound.getAssetName());
+            
+            assets.add(sound);
         }
         
         /*
@@ -168,6 +171,8 @@ public class GMOrphanedFiles {
         ArrayList<GM1Sprite> sprites=GM1Sprite.allFiles(directory);
         for (GM1Sprite sprite : sprites){
             allSpriteAssets.add(sprite.getAssetName());
+            
+            assets.add(sprite);
         }
         
         /*
@@ -179,6 +184,19 @@ public class GMOrphanedFiles {
         for (GM1Timeline timeline : timelines){
             allTimelineAssets.add(timeline.getAssetName());
             code.add(timeline.code());
+            
+            assets.add(timeline);
+        }
+        
+        /*
+         * Configs don't contain anything useful to us, at least as far as I know.
+         * We could do datafiles too, but since they can only be accessed as strings
+         * and strings can be broken up (file_text_open_read("folder"+"\"+"filename"))
+         * it feels kind of futile.
+         */
+         
+        for (GM1File f : assets){
+            System.out.println(f.getAssetName());
         }
     }
 }

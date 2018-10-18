@@ -11,7 +11,7 @@ public class GM1Shader extends GM1File {
     private static final String EXTENSION=".shader";
     
 	public GM1Shader(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, false);
 	}
     
     public static ArrayList<GM1Shader> allFiles(String directory){

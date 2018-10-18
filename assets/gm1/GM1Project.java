@@ -11,7 +11,7 @@ public class GM1Project extends GM1File {
     private static final String EXTENSION=".project.gmx";
     
 	public GM1Project(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static GM1Project autoDetect(String directory){

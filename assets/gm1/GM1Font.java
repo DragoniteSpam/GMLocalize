@@ -11,7 +11,7 @@ public class GM1Font extends GM1File {
     private static final String EXTENSION=".font.gmx";
     
 	public GM1Font(String absolutePath){
-		super(absolutePath);
+		super(absolutePath, true);
 	}
     
     public static ArrayList<GM1Font> allFiles(String directory){

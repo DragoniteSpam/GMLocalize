@@ -14,11 +14,17 @@ public class GM1File extends File {
     
     protected Document document;
     protected String plainText;
+    protected boolean isXML;
 	
-	public GM1File(String absolutePath){
+	public GM1File(String absolutePath, boolean isXML){
 		super(absolutePath);
-		this.assetName=getName().substring(0, getName().indexOf('.'));
+        if (exists()){
+            this.assetName=getName().substring(0, getName().indexOf('.'));
+        } else {
+            this.assetName=absolutePath;
+        }
 		this.inUse=false;
+        this.isXML=isXML;
         
         this.document=parseXMLDocument();
         this.plainText=readPlainText();
@@ -45,6 +51,10 @@ public class GM1File extends File {
     }
     
     private final Document parseXMLDocument(){
+        if (!exists()||!isXML){
+            return null;
+        }
+        
         try {
             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
             DocumentBuilder builder=factory.newDocumentBuilder();
@@ -82,6 +92,10 @@ public class GM1File extends File {
     }
     
     private final String readPlainText(){
+        if (!exists()){
+            return "";
+        }
+        
         StringBuilder builder=new StringBuilder();
         
         try {
