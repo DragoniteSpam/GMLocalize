@@ -103,6 +103,39 @@ public class GM1File extends File {
         return builder.toString();
     }
     
+    /*
+     * There has got to be a way to simplify these. I just don't know
+     * what it is.
+     */
+    
+    protected ArrayList<String> xmlGetPrimaryAttributes(String outerName, String attributeName){
+        ArrayList<String> strings=new ArrayList<String>();
+        
+        NodeList outer=document.getElementsByTagName(outerName);
+        for (int i=0; i<outer.getLength(); i++){
+            String name=((Element)outer.item(i)).getAttribute(attributeName);
+            if (name.length()>0){
+                strings.add(name);
+            }
+        }
+        
+        return strings;
+    }
+    
+    protected ArrayList<String> xmlGetPrimaryValues(String outerName){
+        ArrayList<String> strings=new ArrayList<String>();
+        
+        NodeList outer=document.getElementsByTagName(outerName);
+        for (int i=0; i<outer.getLength(); i++){
+            String name=((Element)outer.item(i)).getTextContent();
+            if (name.length()>0){
+                strings.add(name);
+            }
+        }
+        
+        return strings;
+    }
+    
     protected ArrayList<String> xmlGetDefaultAttributes(String outerName, String innerName, String attributeName){
         ArrayList<String> strings=new ArrayList<String>();
         

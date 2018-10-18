@@ -70,8 +70,8 @@ public class GM1Room extends GM1File {
         
         ArrayList<String> instanceNames=new ArrayList<String>();
         for (String s : keys){
-            // I can't figure out why keySet() is throwing in "<undefined>"
-            // but we can deal with it like this
+            // Sometimes if you delete an object that's in use in Game Maker
+            // it'll replace that object with "<undefined>" and we don't want that.
             if (!s.equals("<undefined>")){
                 instanceNames.add(s);
             }

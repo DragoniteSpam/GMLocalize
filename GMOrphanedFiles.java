@@ -74,6 +74,29 @@ public class GMOrphanedFiles {
         }
         
         /*
+         * Fonts
+         */
+        ArrayList<String> allFontAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Font> fonts=GM1Font.allFiles(directory);
+        for (GM1Font font : fonts){
+            allFontAssets.add(font.getAssetName());
+        }
+        
+        /*
+         * Objects
+         */
+        ArrayList<String> allObjectAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Object> objects=GM1Object.allFiles(directory);
+        for (GM1Object object : objects){
+            allObjectAssets.add(object.getAssetName());
+            assetsInUse.addAll(object.allObjects());
+            assetsInUse.addAll(object.allSprites());
+            code.add(object.code());
+        }
+        
+        /*
          * Rooms
          */
         ArrayList<String> allRoomAssets=new ArrayList<String>();
