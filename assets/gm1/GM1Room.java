@@ -1,6 +1,8 @@
 package assets.gm1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import java.io.*;
 import org.w3c.dom.*;
@@ -18,11 +20,15 @@ public class GM1Room extends GM1File {
         StringBuilder codeBuilder=new StringBuilder();
     
         NodeList code=document.getElementsByTagName("code");
-        if (code.getLength()>0){
-            // There's no reason for this to be longer than one, but just to be safe
-            for (int i=0; i<code.getLength(); i++){
-                codeBuilder.append(code.item(i).getTextContent()+" ");
-            }
+        // There's no reason for this to be longer than one, but just to be safe
+        for (int i=0; i<code.getLength(); i++){
+            codeBuilder.append(code.item(i).getTextContent()+" ");
+        }
+        
+        ArrayList<String> codeStrings= xmlGetDefaultAttributes("instances", "instance", "code");
+        
+        for (String s : codeStrings){
+            codeBuilder.append(s);
         }
         
         return codeBuilder.toString();
@@ -40,4 +46,68 @@ public class GM1Room extends GM1File {
 		}
 		return list;
 	}
+    
+    public ArrayList<String> allInstances(){
+        HashMap<String, String> objectNames=new HashMap<String, String>();
+        
+        ArrayList<String> nameStrings= xmlGetDefaultAttributes("instances", "instance", "objName");
+        
+        for (String s : nameStrings){
+            if (!objectNames.containsKey(s)){
+                objectNames.put(s, s);
+            }
+        }
+        
+        nameStrings= xmlGetDefaultAttributes("views", "view", "objName");
+        
+        for (String s : nameStrings){
+            if (!objectNames.containsKey(s)){
+                objectNames.put(s, s);
+            }
+        }
+        
+        Set<String> keys=objectNames.keySet();
+        
+        ArrayList<String> instanceNames=new ArrayList<String>();
+        for (String s : keys){
+            // I can't figure out why keySet() is throwing in "<undefined>"
+            // but we can deal with it like this
+            if (!s.equals("<undefined>")){
+                instanceNames.add(s);
+            }
+        }
+        
+        return instanceNames;
+    }
+    
+    public ArrayList<String> allBackgrounds(){
+        HashMap<String, String> bgNames=new HashMap<String, String>();
+        
+        ArrayList<String> nameStrings= xmlGetDefaultAttributes("backgrounds", "background", "name");
+        
+        for (String s : nameStrings){
+            if (!bgNames.containsKey(s)){
+                bgNames.put(s, s);
+            }
+        }
+        
+        nameStrings= xmlGetDefaultAttributes("tiles", "tile", "bgName");
+        
+        for (String s : nameStrings){
+            if (!bgNames.containsKey(s)){
+                bgNames.put(s, s);
+            }
+        }
+        
+        Set<String> keys=bgNames.keySet();
+        
+        ArrayList<String> names=new ArrayList<String>();
+        for (String s : keys){
+            if (!s.equals("<undefined>")){
+                names.add(s);
+            }
+        }
+        
+        return names;
+    }
 }

@@ -58,19 +58,6 @@ public class GMOrphanedFiles {
             }
         }
 	}
-	
-	public static ArrayList<String> allProjectCode(){
-		/*ArrayList<GMFile> allScripts=allFiles(SCRIPT_FOLDER, ".gml");
-		ArrayList<GMFile> allObjects=allFiles(OBJECT_FOLDER, ".object.gmx");
-		ArrayList<GMFile> allRooms=allFiles(ROOM_FOLDER, ".room.gmx");
-		ArrayList<GMFile> allTimelines=allFiles(TIMELINE_FOLDER, ".timeline.gmx");*/
-		
-		ArrayList<String> code=new ArrayList<String>();
-        
-        //allProjectCodeObjects(allObjects, code);
-		
-		return code;
-	}
     
     public static void assesGM1Project(String directory, GM1Project rootProject){
         String startingRoomName=rootProject.startingRoom();
@@ -78,9 +65,10 @@ public class GMOrphanedFiles {
         StringBuilder codeBuilder=new StringBuilder();
         
         ArrayList<GM1Room> rooms=GM1Room.allFiles(directory);
-        System.out.println(rooms.size()+" rooms");
         for (GM1Room room : rooms){
             codeBuilder.append(room.creationCode());
+            ArrayList<String> roomInstances=room.allInstances();
+            ArrayList<String> roomBackgrounds=room.allBackgrounds();
         }
         
         code=codeBuilder.toString();

@@ -102,4 +102,21 @@ public class GM1File extends File {
         
         return builder.toString();
     }
+    
+    protected ArrayList<String> xmlGetDefaultAttributes(String outerName, String innerName, String attributeName){
+        ArrayList<String> strings=new ArrayList<String>();
+        
+        NodeList outer=document.getElementsByTagName(outerName);
+        for (int i=0; i<outer.getLength(); i++){
+            NodeList inner=((Element)outer.item(i)).getElementsByTagName(innerName);
+            for (int j=0; j<inner.getLength(); j++){
+                String name=((Element)inner.item(j)).getAttribute(attributeName);
+                if (name.length()>0){
+                    strings.add(name);
+                }
+            }
+        }
+        
+        return strings;
+    }
 }
