@@ -169,5 +169,16 @@ public class GMOrphanedFiles {
         for (GM1Sprite sprite : sprites){
             allSpriteAssets.add(sprite.getAssetName());
         }
+        
+        /*
+         * Timelines
+         */
+        ArrayList<String> allTimelineAssets=new ArrayList<String>();
+        
+        ArrayList<GM1Timeline> timelines=GM1Timeline.allFiles(directory);
+        for (GM1Timeline timeline : timelines){
+            allTimelineAssets.add(timeline.getAssetName());
+            code.add(timeline.code());
+        }
     }
 }
