@@ -8,19 +8,42 @@ import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
+/**
+ * A file representing Game Maker Studio 1 Room assets.
+ *
+ * @author DragoniteSpam
+ */
 public class GM1Room extends GM1File {
     private static final String FOLDER=".\\rooms";
     private static final String EXTENSION=".room.gmx";
     protected static String typeName="Room";
     
+    /**
+     * Constructor for a GM1Room file. Essentially a wrapper for the GM1File constructor.
+     * These types of files are XML, so we pass that information on as well.
+     *
+     * @param absolutePath the path to the file. Contrary to the variable name, it doesn't
+     *      have to be an absolute path, as long as Java can find it.
+     */
 	public GM1Room(String absolutePath){
 		super(absolutePath, true);
 	}
     
+    /**
+     * Returns the name of the asset type; in this case, "Room."
+     *
+     * @return the name of the asset type
+     */
     public String getTypeName(){
         return typeName;
     }
     
+    /**
+     * Extracts the creation code of both the room itself and the instances inside the room, and returns it
+     * as a string. One long string.
+     *
+     * @return a String containing the creation code of everything in the room that uses creation code
+     */
     public String creationCode(){
         StringBuilder codeBuilder=new StringBuilder();
     
@@ -39,6 +62,13 @@ public class GM1Room extends GM1File {
         return codeBuilder.toString();
     }
     
+    /**
+     * Searches a folder (the project folder + the asset folder) for files with the asset extension.
+     * Instantiates a new GM1Room for each one that it finds.
+     *
+     * @return an ArrayList of GM1Room representing all of the rooms found in the project
+     *      directory
+     */
     public static ArrayList<GM1Room> allFiles(String directory){
 		File folder=new File(directory+FOLDER);
 		ArrayList<GM1Room> list=new ArrayList<GM1Room>();
@@ -52,6 +82,13 @@ public class GM1Room extends GM1File {
 		return list;
 	}
     
+    /**
+     * Finds all objects used by the room. This includes both instances placed down in the editor and
+     * instances that the views are set to follow, although to be honest, if an object is only in use in
+     * your project as a view target, it's probably not of much use to you anyway.
+     *
+     * @return an ArrayList of Strings containing the names of all of the objects in use in the room
+     */
     public ArrayList<String> allInstances(){
         HashMap<String, String> objectNames=new HashMap<String, String>();
         
@@ -85,6 +122,12 @@ public class GM1Room extends GM1File {
         return instanceNames;
     }
     
+    /**
+     * Finds all backgrounds used by the room. This includes both backgrounds used on their own (you know,
+     * in the "backgrounds" tab) and used as tile sets.
+     *
+     * @return an ArrayList of Strings containing the names of all of the backgrounds in use in the room
+     */
     public ArrayList<String> allBackgrounds(){
         HashMap<String, String> bgNames=new HashMap<String, String>();
         

@@ -8,19 +8,43 @@ import java.io.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
+/**
+ * A file representing Game Maker Studio 1 Object assets.
+ *
+ * @author DragoniteSpam
+ */
 public class GM1Object extends GM1File {
     private static final String FOLDER=".\\objects";
     private static final String EXTENSION=".object.gmx";
     protected static String typeName="Object";
     
+    /**
+     * Constructor for a GM1Object file. Essentially a wrapper for the GM1File constructor.
+     * These types of files are XML, so we pass that information on as well.
+     *
+     * @param absolutePath the path to the file. Contrary to the variable name, it doesn't
+     *      have to be an absolute path, as long as Java can find it.
+     */
 	public GM1Object(String absolutePath){
 		super(absolutePath, true);
 	}
     
+    /**
+     * Returns the name of the asset type; in this case, "Object."
+     *
+     * @return the name of the asset type
+     */
     public String getTypeName(){
         return typeName;
     }
     
+    /**
+     * Searches a folder (the project folder + the asset folder) for files with the asset extension.
+     * Instantiates a new GM1Object for each one that it finds.
+     *
+     * @return an ArrayList of GM1Object representing all of the objects found in the project
+     *      directory
+     */
     public static ArrayList<GM1Object> allFiles(String directory){
 		File folder=new File(directory+FOLDER);
 		ArrayList<GM1Object> list=new ArrayList<GM1Object>();
@@ -34,29 +58,27 @@ public class GM1Object extends GM1File {
 		return list;
 	}
     
-    public ArrayList<String> allObjects(){
+    /**
+     * Finds the object that this object is a child of, if any. This is important because if an object's only function
+     * is to serve as a base for other objects without being instantiated themselves (think of abstract classes in Java)
+     * then it should be marked as "in use."
+     *
+     * @return a String of the name of all of the parent object, or null if the object doesn't have one
+     */
+    public String getParent(){
         HashMap<String, String> objectNames=new HashMap<String, String>();
         
-        ArrayList<String> nameStrings= xmlGetPrimaryValues("parentName");
+        ArrayList<String> nameStrings=xmlGetPrimaryValues("parentName");
         
-        for (String s : nameStrings){
-            if (!objectNames.containsKey(s)){
-                objectNames.put(s, s);
-            }
-        }
-        
-        Set<String> keys=objectNames.keySet();
-        
-        ArrayList<String> instanceNames=new ArrayList<String>();
-        for (String s : keys){
-            if (!s.equals("<undefined>")){
-                instanceNames.add(s);
-            }
-        }
-        
-        return instanceNames;
+        return (nameStrings.size()>0&&!nameStrings.get(0).equals("<undefined>"))?nameStrings.get(0):null;
     }
     
+    /**
+     * Finds all sprites used by the object. Namely, this is the default sprite index (if it has one) and the sprite maskName
+     * (if it has one).
+     *
+     * @return an ArrayList of Strings containing the names of all of the sprites in use by the object
+     */
     public ArrayList<String> allSprites(){
         HashMap<String, String> spriteNames=new HashMap<String, String>();
         
@@ -88,6 +110,16 @@ public class GM1Object extends GM1File {
         return names;
     }
     
+    /**
+     * Extracts the code of the object's events, and returns it as one long string.
+     *
+     * <b>This is untested with drag-and-drop actions besides the "execute code" one. It should behave
+     * the same, if I understand the way that drag-and-drop is stored in the .gmx file, but you may
+     * well find some unexpected behavior when using it. I'm taking a gamble that the people who use
+     * this tool are not likely to be people who make heavy use of drag-and-drop.</b>
+     *
+     * @return a String containing the code of all of the object's events
+     */
     public String code(){
         StringBuilder codeBuilder=new StringBuilder();
         

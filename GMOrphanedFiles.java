@@ -8,7 +8,19 @@ import javax.xml.parsers.*;
 
 import assets.gm1.*;
 
+/**
+ * Class with the main method and a few helper ones. There's a tiny bit of code that will
+ * want to be changed if/when I get around to making a GMS2 version.
+ *
+ * @author DragoniteSpam
+ */
 public class GMOrphanedFiles {
+    /**
+     * Main method. If you cloned this repository you probably know how it works.
+     *
+     * @param args the command line arguments; in this case, the names of the project
+     *      folders you want to check.
+     */
 	public static void main(String[] args) throws IOException {
         if (args.length==0){
             System.out.println("Incorrect use: use ");
@@ -33,7 +45,7 @@ public class GMOrphanedFiles {
                 assesGM1Project(projectName, rootProject1);
             }
             
-            
+            // If/when you set this up for GMS2, put the appropriate code here
             //if (rootProject2!=null){
             //}
         }
@@ -58,6 +70,17 @@ public class GMOrphanedFiles {
         new Scanner(System.in).nextLine();
 	}
     
+    /**
+     * Reads through a Game Maker Studio 1 project and attempts to detect orphaned files.
+     * You may want to put this in its own class, possibly GM1Project. I just wanted to write
+     * code quickly.
+     *
+     * @param directory the folder that contains the Game Maker project. main normally gives
+     * it a relative path, but an absolute one works just as well.
+     * @param rootProject the object representing the .project.gmx file. It's only used for
+     *      extracting the starting room and macros (constants), but it's a good indication
+     *      that the project exists.
+     */
     public static void assesGM1Project(String directory, GM1Project rootProject){
         ArrayList<GM1File> assets=new ArrayList<GM1File>();
         ArrayList<String> assetsInUse=new ArrayList<String>();
@@ -97,7 +120,11 @@ public class GMOrphanedFiles {
         ArrayList<GM1Object> objects=GM1Object.allFiles(directory);
         for (GM1Object object : objects){
             allObjectAssets.add(object.getAssetName());
-            assetsInUse.addAll(object.allObjects());
+            
+            String parentName=object.getParent();
+            if (parentName!=null){
+                assetsInUse.add(parentName);
+            }
             assetsInUse.addAll(object.allSprites());
             code.add(object.code());
             
@@ -271,6 +298,14 @@ public class GMOrphanedFiles {
         }
     }
     
+    /**
+     * Searches the code for asset names. The code is provided in the form of a HashMap instead of
+     * strings of text, so looking this up should be considerably faster than before, when it was
+     * just strings of text.
+     *
+     * @param assets ArrayList of strings containing the names of the assets to check for.
+     * @param code HashMap of strings containing each individual token that appears in the code.
+     */
     public static void searchCode(ArrayList<GM1File> assets, HashMap<String, String> code){
         for (GM1File f : assets){
             if (!f.isInUse()&&code.containsKey(f.getAssetName())){
@@ -279,6 +314,18 @@ public class GMOrphanedFiles {
         }
     }
     
+    /**
+     * Marks asset(s) with the specified name as "in use." Right now it searches a list so
+     * it performs in O(n) time, but if you want it to be faster (say you have thousands and thousands
+     * of assets) you should change this to take a HashMap instead.
+     *
+     * Also, if support for GMS2 ever gets added, GM1File and its subclasses will probably need to
+     * be refactored a bit.
+     *
+     * @param assets ArrayList of GMFiles; ideally exactly one of these has an asset name matching
+     * @param name the name of the asset you want to mark as "in use." If you somehow have more than
+     *      one asset with the same name, both will be marked and you'll be warned.
+     */
     public static void mark(ArrayList<GM1File> assets, String name){
         boolean found=false;
         for (GM1File f : assets){
@@ -292,6 +339,16 @@ public class GMOrphanedFiles {
         }
     }
     
+    /**
+     * Takes strings of code and separates them into individual tokens. Another way to think about
+     * it is that it removes all of the characters that aren't legal-ish variable names and breaks
+     * each term into a HashMap.
+     *
+     * @param code ArrayList containing strings of code
+     * @return HashMap containing the individual tokens, as described above. (The key is all we care
+     *      about, but it sets the value to the same string as the key. There's probably a better data
+     *      structure for this but I can't think of it off the top of my head.)
+     */
     public static HashMap<String, String> findAllCodeTokens(ArrayList<String> code){
         HashMap<String, String> tokens=new HashMap<String, String>();
         

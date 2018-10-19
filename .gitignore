@@ -32,3 +32,6 @@ discard/
 
 # I don't know how distributing jars work so I test stuff in here
 test/
+
+# Some files I put on the itch.io page, and possibly elsewhere
+itch/
