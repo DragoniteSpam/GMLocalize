@@ -117,7 +117,7 @@ public class GM2Object extends GM2File {
 						String line;
 						
 						while ((line=bufferedReader.readLine())!=null){
-							builder.append(line.trim());
+							builder.append(line.trim()+" ");
 						}
 					
 						bufferedReader.close();
