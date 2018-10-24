@@ -7,7 +7,7 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
 /**
- * A file represeting the Game Maker project as a whole.
+ * A file representing the Game Maker project as a whole.
  *
  * @author DragoniteSpam
  */
@@ -38,7 +38,7 @@ public class GM1Project extends GM1File {
     
     /**
      * Searches the project folder for a file named "<project name>.project.gmx."
-     * There can only be one of these in a folder. If such a file exists, it'll return null instead.
+     * There can only be one of these in a folder. If no such file exists, it'll return null instead.
      *
      * @return a GM1Project object representing the overall project, or null if none is found.
      */

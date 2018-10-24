@@ -189,7 +189,7 @@ public class GM1File extends File {
     
     /*
      * There has got to be a way to simplify these. I just don't know what it is.
-     * Note: I'm not familiar with XML vocabulary, so if/when I get words wrong, let'searching
+     * Note: I'm not familiar with XML vocabulary, so if/when I get words wrong, let's
      * hope that people are able to figure out what I'm talking about anyway.
      */
     

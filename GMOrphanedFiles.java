@@ -7,6 +7,7 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
 import assets.gm1.*;
+import assets.gm2.*;
 
 /**
  * Class with the main method and a few helper ones. There's a tiny bit of code that will
@@ -35,19 +36,20 @@ public class GMOrphanedFiles {
             System.out.println("-----------------------------");
             
             GM1Project rootProject1=GM1Project.autoDetect(projectName);
+			GM2Project rootProject2=GM2Project.autoDetect(projectName);
             
-            if (rootProject1==null/*&&rootProject2==null*/){
+            if (rootProject1==null&&rootProject2==null){
                 System.err.println("We couldn't find a Game Maker Studio (1 or 2) project file in the specified folder. "+
                     "Are you sure you're checking the right one?");
-            }
-            
-            if (rootProject1!=null){
-                assesGM1Project(projectName, rootProject1);
-            }
-            
-            // If/when you set this up for GMS2, put the appropriate code here
-            //if (rootProject2!=null){
-            //}
+            } else {
+				if (rootProject1!=null){
+					assesGM1Project(projectName, rootProject1);
+				}
+				
+				if (rootProject2!=null){
+					assesGM2Project(projectName, rootProject2);
+				}
+			}
         }
         
         System.out.println();
@@ -69,6 +71,148 @@ public class GMOrphanedFiles {
         System.out.println("(Hit Enter to quit.)");
         new Scanner(System.in).nextLine();
 	}
+	
+	public static void assesGM2Project(String directory, GM2Project rootProject){
+        ArrayList<GM2File> assets=new ArrayList<GM2File>();
+        ArrayList<String> assetsInUse=new ArrayList<String>();
+        ArrayList<String> code=new ArrayList<String>();
+        HashMap<String, String> codeTokens;
+        
+        /*
+         * Fonts
+         */
+        ArrayList<String> allFontAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Font> fonts=GM2Font.allFiles(directory);
+        for (GM2Font font : fonts){
+            allFontAssets.add(font.getAssetName());
+            
+            assets.add(font);
+        }
+        
+        /*
+         * Objects
+         */
+        ArrayList<String> allObjectAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Object> objects=GM2Object.allFiles(directory);
+        for (GM2Object object : objects){
+            allObjectAssets.add(object.getAssetName());
+            
+            /*String parentName=object.getParent();
+            if (parentName!=null){
+                assetsInUse.add(parentName);
+            }
+            assetsInUse.addAll(object.allSprites());
+            code.add(object.code());*/
+            
+            assets.add(object);
+        }
+		
+		/*
+         * Paths
+		 * I don't have any paths to test with yet
+         */
+		
+		ArrayList<String> allPathAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Path> paths=GM2Path.allFiles(directory);
+        for (GM2Path path : paths){
+            allPathAssets.add(path.getAssetName());
+            assets.add(path);
+        }
+		
+		/*
+         * Rooms
+         */
+        ArrayList<String> allRoomAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Room> rooms=GM2Room.allFiles(directory);
+        for (GM2Room room : rooms){
+            allRoomAssets.add(room.getAssetName());
+            /*code.add(room.creationCode());
+            assetsInUse.addAll(room.allInstances());
+            assetsInUse.addAll(room.allBackgrounds());*/
+            
+            assets.add(room);
+        }
+		
+		/*
+         * Scripts
+         */
+        ArrayList<String> allScriptAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Script> scripts=GM2Script.allFiles(directory);
+        for (GM2Script script : scripts){
+            allScriptAssets.add(script.getAssetName());
+            code.add(script.getPlainText());
+            
+            assets.add(script);
+        }
+		
+		/*
+         * Shaders
+         */
+        ArrayList<String> allShaderAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Shader> shaders=GM2Shader.allFiles(directory);
+        for (GM2Shader shader : shaders){
+            allShaderAssets.add(shader.getAssetName());
+            
+            assets.add(shader);
+        }
+		
+		/*
+         * Sound
+         */
+        ArrayList<String> allSoundAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Sound> sounds=GM2Sound.allFiles(directory);
+        for (GM2Sound sound : sounds){
+            allSoundAssets.add(sound.getAssetName());
+            
+            assets.add(sound);
+        }
+		
+		/*
+         * Sprites
+         */
+        ArrayList<String> allSpriteAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Sprite> sprites=GM2Sprite.allFiles(directory);
+        for (GM2Sprite sprite : sprites){
+            allSpriteAssets.add(sprite.getAssetName());
+            
+            assets.add(sprite);
+        }
+		
+		/*
+         * Timelines
+		 * don't have any of these to test with either
+         */
+        ArrayList<String> allTimelineAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Timeline> timelines=GM2Timeline.allFiles(directory);
+        for (GM2Timeline timeline : timelines){
+            allTimelineAssets.add(timeline.getAssetName());
+            /*code.add(timeline.code());*/
+            
+            assets.add(timeline);
+        }
+		
+		/*
+         * Tilesets
+         */
+        ArrayList<String> allTilesetAssets=new ArrayList<String>();
+        
+        ArrayList<GM2Tileset> tilesets=GM2Tileset.allFiles(directory);
+        for (GM2Tileset tileset : tilesets){
+            allTilesetAssets.add(tileset.getAssetName());
+            /*code.add(tileset.code());*/
+            
+            assets.add(tileset);
+        }
+    }
     
     /**
      * Reads through a Game Maker Studio 1 project and attempts to detect orphaned files.
@@ -141,8 +285,8 @@ public class GMOrphanedFiles {
             allPathAssets.add(path.getAssetName());
             assets.add(path);
             // Paths also have a "backroom" element, which is presumably the
-            // index of the room that's used as the background, but becuse we
-            // all love consistancy it's saved as an integer index and not an
+            // index of the room that's used as the background, but because we
+            // all love consistency it's saved as an integer index and not an
             // asset name and that makes it quite difficult to tell which room
             // is actually being used, since this program iterates over each
             // file in the folder and not the entry in the project file, and
