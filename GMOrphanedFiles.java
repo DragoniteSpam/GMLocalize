@@ -109,7 +109,6 @@ public class GMOrphanedFiles {
         ArrayList<GM2Object> objects=GM2Object.allFiles(directory);
         for (GM2Object object : objects){
             allObjectAssets.add(object.getAssetName());
-			System.out.println(object.getAssetName().toUpperCase());
 			
             code.add(object.getCodeString());
 			
@@ -141,8 +140,10 @@ public class GMOrphanedFiles {
         ArrayList<GM2Room> rooms=GM2Room.allFiles(directory);
         for (GM2Room room : rooms){
             allRoomAssets.add(room.getAssetName());
-            /*code.add(room.creationCode());
-            assetsInUse.addAll(room.allInstances());
+            code.add(room.getCodeString());
+			System.out.println(room.getAssetName());
+			System.out.println(room.getCodeString());
+            /*assetsInUse.addAll(room.allInstances());
             assetsInUse.addAll(room.allBackgrounds());*/
             
             assets.put(room.getID(), room);

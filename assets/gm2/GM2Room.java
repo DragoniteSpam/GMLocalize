@@ -13,6 +13,8 @@ public class GM2Room extends GM2File {
     private static final String FOLDER="\\rooms";
     private static final String EXTENSION=".yy";
     protected static String typeName="Room";
+	
+	private String codeString;
     
     /**
      * Constructor for a GM2Room file. Essentially a wrapper for the GM2File constructor.
@@ -23,6 +25,7 @@ public class GM2Room extends GM2File {
      */
 	public GM2Room(String absolutePath){
 		super(absolutePath, true);
+		this.codeString=code();
 	}
     
     /**
@@ -32,6 +35,19 @@ public class GM2Room extends GM2File {
      */
     public String getTypeName(){
         return typeName;
+    }
+	
+	/**
+     * Returns all of the creation code of the room's instances, and the room itself, assuming the room
+	 * exists. If it doesn't exist or has no code to speak of, it'll return an empty string.
+     * The whitespace is trimmed off of each line and each of the lines are concatenated together,
+     * resulting in one long string with no newline characters. If you don't want these things, you
+     * may want to parse the file with normal file operations.
+     *
+     * @return the room's total creation code
+     */
+    public String getCodeString(){
+        return this.codeString;
     }
     
     /**
@@ -55,5 +71,38 @@ public class GM2Room extends GM2File {
 			}
 		}
 		return list;
+	}
+	
+	private final String code(){
+		if (!exists()){
+            return "";
+        }
+		
+        StringBuilder builder=new StringBuilder();
+        
+        try {
+			File folder=new File(getParentFile().getAbsolutePath());
+			for (File entry : folder.listFiles()){
+				if (!entry.isDirectory()){
+					if (entry.getName().endsWith(GML_EXTENSION)){
+						FileReader reader=new FileReader(entry);
+						BufferedReader bufferedReader=new BufferedReader(reader);
+						String line;
+						
+						while ((line=bufferedReader.readLine())!=null){
+							builder.append(line.trim());
+						}
+					
+						bufferedReader.close();
+					}
+				}
+			}
+        } catch (FileNotFoundException e){
+            System.err.println("Didn't find the file: "+getName());
+        } catch (IOException e){
+            System.err.println("Something went wrong in: "+getName());
+        }
+        
+        return builder.toString();
 	}
 }
