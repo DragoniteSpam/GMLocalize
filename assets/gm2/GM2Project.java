@@ -10,7 +10,7 @@ import java.io.*;
  * @author DragoniteSpam
  */
 public class GM2Project extends GM2File {
-    private static final String FOLDER=".\\";
+    private static final String FOLDER="\\";
     private static final String EXTENSION=".yyp";
     protected static String typeName="Project";
     

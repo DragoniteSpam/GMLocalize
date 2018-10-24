@@ -208,10 +208,13 @@ public class GMOrphanedFiles {
         ArrayList<GM2Tileset> tilesets=GM2Tileset.allFiles(directory);
         for (GM2Tileset tileset : tilesets){
             allTilesetAssets.add(tileset.getAssetName());
-            /*code.add(tileset.code());*/
             
             assets.add(tileset);
         }
+		
+		for (String s : code){
+			System.out.println(s+"\n");
+		}
     }
     
     /**

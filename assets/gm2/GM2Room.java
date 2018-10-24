@@ -10,7 +10,7 @@ import java.io.*;
  * @author DragoniteSpam
  */
 public class GM2Room extends GM2File {
-    private static final String FOLDER=".\\rooms";
+    private static final String FOLDER="\\rooms";
     private static final String EXTENSION=".yy";
     protected static String typeName="Room";
     

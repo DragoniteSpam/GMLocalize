@@ -10,7 +10,7 @@ import java.io.*;
  * @author DragoniteSpam
  */
 public class GM2Sound extends GM2File {
-    private static final String FOLDER=".\\sounds";
+    private static final String FOLDER="\\sounds";
     private static final String EXTENSION=".yy";
     protected static String typeName="Sound";
     

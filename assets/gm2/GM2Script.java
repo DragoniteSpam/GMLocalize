@@ -10,7 +10,7 @@ import java.io.*;
  * @author DragoniteSpam
  */
 public class GM2Script extends GM2File {
-    private static final String FOLDER=".\\scripts";
+    private static final String FOLDER="\\scripts";
     private static final String EXTENSION=".yy";
     protected static String typeName="Script";
     
@@ -23,6 +23,7 @@ public class GM2Script extends GM2File {
      */
 	public GM2Script(String absolutePath){
 		super(absolutePath, true);
+		this.plainText=code();
 	}
     
     /**
@@ -68,4 +69,36 @@ public class GM2Script extends GM2File {
 		}
 		return list;
 	}
+	
+	/**
+     * If the file exists, it reads the information out of it in plain text. Each line is trimmed
+     * and they're concatenated together, resulting in one long string with no newline characters.
+     *
+     * @return the plain text of the file, if available, or null
+     */
+    public final String code(){
+        if (!exists()){
+            return "";
+        }
+        
+        StringBuilder builder=new StringBuilder();
+        
+        try {
+            FileReader reader=new FileReader(changeExtension(".gml"));
+            BufferedReader bufferedReader=new BufferedReader(reader);
+            String line;
+            
+            while ((line=bufferedReader.readLine())!=null){
+                builder.append(line.trim());
+            }
+        
+            bufferedReader.close();
+        } catch (FileNotFoundException e){
+            System.err.println("Didn't find the file: "+getName());
+        } catch (IOException e){
+            System.err.println("Something went wrong in: "+getName());
+        }
+        
+        return builder.toString();
+    }
 }

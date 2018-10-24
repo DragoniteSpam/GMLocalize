@@ -30,7 +30,7 @@ public class GM2File extends File {
      * @param absolutePath the path to the file. Contrary to the variable name, it doesn't
      *      have to be an absolute path, as long as Java can find it.
      * @param isJSON should be true if the file type is supposed to be an JSON file, false otherwise.
-     *      As a general rule, files that end with .*.yy are usually JSON.
+     *      As a general rule, files that end with .*.yy are JSON.
      */
 	public GM2File(String absolutePath, boolean isJSON){
 		super(absolutePath);
@@ -41,8 +41,6 @@ public class GM2File extends File {
         }
 		this.inUse=false;
         this.isJSON=isJSON;
-		
-        this.plainText=readPlainText();
 	}
 	
     /**
@@ -93,36 +91,8 @@ public class GM2File extends File {
     public String getTypeName(){
         throw new UnsupportedOperationException("GM2File.getTypeName() is only implemented in its child classes. It's supposed to be abstract, but Java doesn't allow that.");
     }
-    
-    /**
-     * If the file exists, it reads the information out of it in plain text. Each line is trimmed
-     * and they're concatenated together, resulting in one long string with no newline characters.
-     *
-     * @return the plain text of the file, if available, or null
-     */
-    private final String readPlainText(){
-        if (!exists()){
-            return "";
-        }
-        
-        StringBuilder builder=new StringBuilder();
-        
-        try {
-            FileReader reader=new FileReader(getAbsolutePath());
-            BufferedReader bufferedReader=new BufferedReader(reader);
-            String line;
-            
-            while ((line=bufferedReader.readLine())!=null){
-                builder.append(line.trim());
-            }
-        
-            bufferedReader.close();
-        } catch (FileNotFoundException e){
-            System.err.println("Didn't find the file: "+getName());
-        } catch (IOException e){
-            System.err.println("Something went wrong in: "+getName());
-        }
-        
-        return builder.toString();
-    }
+	
+	protected String changeExtension(String newExtension){
+		return getAbsolutePath().substring(0, getAbsolutePath().indexOf('.'))+newExtension;
+	}
 }

@@ -10,7 +10,7 @@ import java.io.*;
  * @author DragoniteSpam
  */
 public class GM2Timeline extends GM2File {
-    private static final String FOLDER=".\\timelines";
+    private static final String FOLDER="\\timelines";
     private static final String EXTENSION=".yy";
     protected static String typeName="Timeline";
     

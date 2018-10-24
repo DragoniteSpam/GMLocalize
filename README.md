@@ -3,6 +3,8 @@ Sometimes when you're working on Game Maker projects, you stop using scripts or 
 
 Note: I'm currently writing this for Game Maker Studio 1. If I ever finish this and there's demand for it, or if I get bored enough, I'll make a version for Game Maker Studio 2, also.
 
+24 October 2018: am working on a GMS2 version. No idea when it'll be done.
+
 # Usage
 1. Make sure you have Java installed. It should probably be at least Java 8, too. I don't know what happens if you try running this with like Java 5 or something. Probably nothing good. If you're interested in cloning this project, I'm guessing you already have that, though.
 
