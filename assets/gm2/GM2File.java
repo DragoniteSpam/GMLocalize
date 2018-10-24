@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.lang.UnsupportedOperationException;
 
 import java.io.*;
+import org.json.*;
 
 /**
  * Wrapper for java.io.File that contains a few methods for reading the data out of them 
@@ -19,6 +20,7 @@ public class GM2File extends File {
 	private String assetName;
     
     protected String plainText;
+	protected JSONObject json;
     protected boolean isJSON;
 	
     /**
@@ -40,7 +42,14 @@ public class GM2File extends File {
             this.assetName=absolutePath;
         }
 		this.inUse=false;
+		this.plainText=readPlainText();
+		System.out.println(this.plainText);
         this.isJSON=isJSON;
+		if (isJSON&&exists()){
+			this.json=new JSONObject(this.plainText);
+		} else {
+			this.json=null;
+		}
 	}
 	
     /**
@@ -80,6 +89,16 @@ public class GM2File extends File {
     public String getPlainText(){
         return this.plainText;
     }
+	
+	/**
+     * Returns the JSON object representing this file, if the file is supposed to contain JSON data and
+	 * the file exists.
+     *
+     * @return the JSON object of the file
+     */
+	public JSONObject getJSON(){
+		return this.json;
+	}
     
     /**
      * Returns the name of the asset type. At least, that's what it does in the subclasses; Java
@@ -95,4 +114,36 @@ public class GM2File extends File {
 	protected String changeExtension(String newExtension){
 		return getAbsolutePath().substring(0, getAbsolutePath().indexOf('.'))+newExtension;
 	}
+	
+	/**
+     * If the file exists, it reads the information out of it in plain text. Each line is trimmed
+     * and they're concatenated together, resulting in one long string with no newline characters.
+     *
+     * @return the plain text of the file, if available, or null
+     */
+    private final String readPlainText(){
+        if (!exists()){
+            return "";
+        }
+        
+        StringBuilder builder=new StringBuilder();
+        
+        try {
+            FileReader reader=new FileReader(getAbsolutePath());
+            BufferedReader bufferedReader=new BufferedReader(reader);
+            String line;
+            
+            while ((line=bufferedReader.readLine())!=null){
+                builder.append(line.trim());
+            }
+        
+            bufferedReader.close();
+        } catch (FileNotFoundException e){
+            System.err.println("Didn't find the file: "+getName());
+        } catch (IOException e){
+            System.err.println("Something went wrong in: "+getName());
+        }
+        
+        return builder.toString();
+    }
 }

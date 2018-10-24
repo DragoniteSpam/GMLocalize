@@ -13,6 +13,8 @@ public class GM2Script extends GM2File {
     private static final String FOLDER="\\scripts";
     private static final String EXTENSION=".yy";
     protected static String typeName="Script";
+	
+	private String codeString;
     
     /**
      * Constructor for a GM2Script file. Essentially a wrapper for the GM2File constructor.
@@ -22,8 +24,8 @@ public class GM2Script extends GM2File {
      *      have to be an absolute path, as long as Java can find it.
      */
 	public GM2Script(String absolutePath){
-		super(absolutePath, true);
-		this.plainText=code();
+		super(absolutePath, false);
+		this.codeString=code();
 	}
     
     /**
@@ -70,13 +72,7 @@ public class GM2Script extends GM2File {
 		return list;
 	}
 	
-	/**
-     * If the file exists, it reads the information out of it in plain text. Each line is trimmed
-     * and they're concatenated together, resulting in one long string with no newline characters.
-     *
-     * @return the plain text of the file, if available, or null
-     */
-    public final String code(){
+    private final String code(){
         if (!exists()){
             return "";
         }

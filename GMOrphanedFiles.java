@@ -3,8 +3,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import java.io.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
+import org.json.*;
 
 import assets.gm1.*;
 import assets.gm2.*;
@@ -105,6 +104,8 @@ public class GMOrphanedFiles {
             }
             assetsInUse.addAll(object.allSprites());
             code.add(object.code());*/
+			
+			System.out.println(object.getAssetName()+" spriteID: "+object.getJSON().getString("spriteID"));
             
             assets.add(object);
         }
