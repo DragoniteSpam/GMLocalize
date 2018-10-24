@@ -24,7 +24,7 @@ public class GM2Script extends GM2File {
      *      have to be an absolute path, as long as Java can find it.
      */
 	public GM2Script(String absolutePath){
-		super(absolutePath, false);
+		super(absolutePath, true);
 		this.codeString=code();
 	}
     
@@ -35,6 +35,19 @@ public class GM2Script extends GM2File {
      */
     public String getTypeName(){
         return typeName;
+    }
+	
+	/**
+     * Returns the code associated with the of the file (the .gml file in the same folder), if the
+	 * file exists. If it doesn't exist, it'll return an empty string.
+     * The whitespace is trimmed off of each line and each of the lines are concatenated together,
+     * resulting in one long string with no newline characters. If you don't want these things, you
+     * may want to parse the file with normal file operations.
+     *
+     * @return the script's code
+     */
+    public String getCodeString(){
+        return this.codeString;
     }
     
     /**
@@ -56,14 +69,14 @@ public class GM2Script extends GM2File {
 						if (file.exists()){
 							list.add(file);
 						} else {
-							System.out.println("Didn't find "+file.getAbsolutePath());
+							System.err.println("Didn't find "+file.getAbsolutePath());
 						}
 					} else {
 						GM2Script file=new GM2Script(entry.getAbsolutePath()+"\\"+entry.getName()+EXTENSION);
 						if (file.exists()){
 							list.add(file);
 						} else {
-							System.out.println("Didn't find "+file.getAbsolutePath());
+							System.err.println("Didn't find "+file.getAbsolutePath());
 						}
 					}
 				}

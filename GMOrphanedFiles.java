@@ -15,6 +15,7 @@ import assets.gm2.*;
  * @author DragoniteSpam
  */
 public class GMOrphanedFiles {
+	private static final String ABSENT_ASSET="00000000-0000-0000-0000-000000000000";
     /**
      * Main method. If you cloned this repository you probably know how it works.
      *
@@ -71,9 +72,20 @@ public class GMOrphanedFiles {
         new Scanner(System.in).nextLine();
 	}
 	
+	/**
+     * Reads through a Game Maker Studio 2 project and attempts to detect orphaned files.
+     * You may want to put this in its own class, possibly GM2Project. I just wanted to write
+     * code quickly.
+     *
+     * @param directory the folder that contains the Game Maker project. main normally gives
+     * it a relative path, but an absolute one works just as well.
+     * @param rootProject the object representing the .YYP file. It's only used for
+     *      extracting the starting room and macros (constants), but it's a good indication
+     *      that the project exists.
+     */
 	public static void assesGM2Project(String directory, GM2Project rootProject){
-        ArrayList<GM2File> assets=new ArrayList<GM2File>();
-        ArrayList<String> assetsInUse=new ArrayList<String>();
+        HashMap<String, GM2File> assets=new HashMap<String, GM2File>();
+        HashMap<String, String> assetsInUse=new HashMap<String, String>();
         ArrayList<String> code=new ArrayList<String>();
         HashMap<String, String> codeTokens;
         
@@ -86,7 +98,7 @@ public class GMOrphanedFiles {
         for (GM2Font font : fonts){
             allFontAssets.add(font.getAssetName());
             
-            assets.add(font);
+            assets.put(font.getID(), font);
         }
         
         /*
@@ -97,17 +109,14 @@ public class GMOrphanedFiles {
         ArrayList<GM2Object> objects=GM2Object.allFiles(directory);
         for (GM2Object object : objects){
             allObjectAssets.add(object.getAssetName());
-            
-            /*String parentName=object.getParent();
-            if (parentName!=null){
-                assetsInUse.add(parentName);
-            }
-            assetsInUse.addAll(object.allSprites());
-            code.add(object.code());*/
+			System.out.println(object.getAssetName().toUpperCase());
 			
-			System.out.println(object.getAssetName()+" spriteID: "+object.getJSON().getString("spriteID"));
+            code.add(object.getCodeString());
+			
+			selectiveAddToHashMap(assetsInUse, object.allSprites());
+			selectiveAddToHashMap(assetsInUse, object.allObjects());
             
-            assets.add(object);
+            assets.put(object.getID(), object);
         }
 		
 		/*
@@ -120,7 +129,8 @@ public class GMOrphanedFiles {
         ArrayList<GM2Path> paths=GM2Path.allFiles(directory);
         for (GM2Path path : paths){
             allPathAssets.add(path.getAssetName());
-            assets.add(path);
+			
+            assets.put(path.getID(), path);
         }
 		
 		/*
@@ -135,7 +145,7 @@ public class GMOrphanedFiles {
             assetsInUse.addAll(room.allInstances());
             assetsInUse.addAll(room.allBackgrounds());*/
             
-            assets.add(room);
+            assets.put(room.getID(), room);
         }
 		
 		/*
@@ -146,9 +156,9 @@ public class GMOrphanedFiles {
         ArrayList<GM2Script> scripts=GM2Script.allFiles(directory);
         for (GM2Script script : scripts){
             allScriptAssets.add(script.getAssetName());
-            code.add(script.getPlainText());
+            code.add(script.getCodeString());
             
-            assets.add(script);
+            assets.put(script.getID(), script);
         }
 		
 		/*
@@ -160,7 +170,7 @@ public class GMOrphanedFiles {
         for (GM2Shader shader : shaders){
             allShaderAssets.add(shader.getAssetName());
             
-            assets.add(shader);
+            assets.put(shader.getID(), shader);
         }
 		
 		/*
@@ -172,7 +182,7 @@ public class GMOrphanedFiles {
         for (GM2Sound sound : sounds){
             allSoundAssets.add(sound.getAssetName());
             
-            assets.add(sound);
+            assets.put(sound.getID(), sound);
         }
 		
 		/*
@@ -184,7 +194,7 @@ public class GMOrphanedFiles {
         for (GM2Sprite sprite : sprites){
             allSpriteAssets.add(sprite.getAssetName());
             
-            assets.add(sprite);
+            assets.put(sprite.getID(), sprite);
         }
 		
 		/*
@@ -198,7 +208,7 @@ public class GMOrphanedFiles {
             allTimelineAssets.add(timeline.getAssetName());
             /*code.add(timeline.code());*/
             
-            assets.add(timeline);
+            assets.put(timeline.getID(), timeline);
         }
 		
 		/*
@@ -210,12 +220,12 @@ public class GMOrphanedFiles {
         for (GM2Tileset tileset : tilesets){
             allTilesetAssets.add(tileset.getAssetName());
             
-            assets.add(tileset);
+            assets.put(tileset.getID(), tileset);
         }
 		
-		for (String s : code){
+		/*for (String s : code){
 			System.out.println(s+"\n");
-		}
+		}*/
     }
     
     /**
@@ -511,4 +521,12 @@ public class GMOrphanedFiles {
         
         return tokens;
     }
+	
+	private static void selectiveAddToHashMap(HashMap<String, String> map, ArrayList<String> values){
+		for (String string : values){
+			if (!string.equals(ABSENT_ASSET)&&!map.containsKey(string)){
+				map.put(string, string);
+			}
+		}
+	}
 }

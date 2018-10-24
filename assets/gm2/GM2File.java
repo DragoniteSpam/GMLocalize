@@ -14,11 +14,13 @@ import org.json.*;
  */
 public class GM2File extends File {
     protected static final String GMS2_EXTENSION=".yy";
+	protected static final String GML_EXTENSION=".gml";
     protected static String typeName="File";
 	
 	private boolean inUse;
 	private String assetName;
     
+	protected String id;
     protected String plainText;
 	protected JSONObject json;
     protected boolean isJSON;
@@ -43,7 +45,7 @@ public class GM2File extends File {
         }
 		this.inUse=false;
 		this.plainText=readPlainText();
-		System.out.println(this.plainText);
+		
         this.isJSON=isJSON;
 		if (isJSON&&exists()){
 			this.json=new JSONObject(this.plainText);
@@ -76,6 +78,17 @@ public class GM2File extends File {
      */
 	public String getAssetName(){
 		return this.assetName;
+	}
+	
+	/**
+     * Game Maker Studio 2 assets are given randomized IDs that look like
+	 * 01234567-89ab-cdef-0123-456789abcdef, which it uses to assign to
+	 * other resources for sprite or object indices or whatever.
+     *
+     * @return the file id
+     */
+	public String getID(){
+		return this.id;
 	}
     
     /**
