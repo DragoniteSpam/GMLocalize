@@ -16,5 +16,10 @@ Note: I'm currently writing this for Game Maker Studio 1. If I ever finish this 
 
 Other than that, follow the directions, they tell you what to do.
 
+# Remind me to do this at some point
+ - My ginuea pig project doesn't have any Paths or Timelines in it, so I can't open them up and see what's inside right now
+ 
+ - GMS2 Rooms can have other kinds of asset layers like free-floating sprites and paths and maybe some other things, but I don't know how those are stored right now
+
 # Some extra credits
 GMS1 projects are stored in XML, which Java can read on its own. GMS2 projects are stored in JSON, though, and I couldn't find anything built-in to Java that lets it parse JSON, so I needed to use someone else's code to do that. [This code](https://github.com/stleary/JSON-java), to be specific.
