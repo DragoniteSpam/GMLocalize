@@ -3,6 +3,7 @@ package assets.gm2;
 import java.util.ArrayList;
 
 import java.io.*;
+import org.json.*;
 
 /**
  * A file representing Game Maker Studio 2 Room assets.
@@ -104,5 +105,37 @@ public class GM2Room extends GM2File {
         }
         
         return builder.toString();
+	}
+	
+	public ArrayList<String> allInstances(){
+		ArrayList<String> values=new ArrayList<String>();
+		
+		JSONArray layers=json.getJSONArray("layers");
+		for (int i = 0; i < layers.length(); i++){
+			String type = layers.getJSONObject(i).getString("modelName");
+			if (type.equals("GMRInstanceLayer")){
+				JSONArray instances=layers.getJSONObject(i).getJSONArray("instances");
+				for (int j=0; j<instances.length(); j++){
+					values.add(instances.getJSONObject(j).getString("m_originalParentID"));
+					values.add(instances.getJSONObject(j).getString("objId"));
+				}
+			}
+		}
+		
+		return values;
+	}
+	
+	public ArrayList<String> allTilemaps(){
+		ArrayList<String> values=new ArrayList<String>();
+		
+		JSONArray layers=json.getJSONArray("layers");
+		for (int i = 0; i < layers.length(); i++){
+			String type = layers.getJSONObject(i).getString("modelName");
+			if (type.equals("GMRTileLayer")){
+				values.add(layers.getJSONObject(i).getString("tilesetId"));
+			}
+		}
+		
+		return values;
 	}
 }
