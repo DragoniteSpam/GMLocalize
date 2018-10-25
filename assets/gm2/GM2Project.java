@@ -45,4 +45,13 @@ public class GM2Project extends GM2File {
         
         return (root.exists())?root:null;
 	}
+	
+	public String startingRoom(){
+		JSONArray resources=json.getJSONArray("resources");
+		for (int i = 0; i < resources.length(); i++){
+			JSONObject value=resources.getJSONObject(i).getJSONObject("Value");
+			if (value.getString("resourceType").equals("GMRoom")){
+			}
+		}
+	}
 }

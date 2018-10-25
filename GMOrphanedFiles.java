@@ -80,7 +80,7 @@ public class GMOrphanedFiles {
      * @param directory the folder that contains the Game Maker project. main normally gives
      * it a relative path, but an absolute one works just as well.
      * @param rootProject the object representing the .YYP file. It's only used for
-     *      extracting the starting room and macros (constants), but it's a good indication
+     *      extracting the starting room and that's about it, but it's a good indication
      *      that the project exists.
      */
 	public static void assesGM2Project(String directory, GM2Project rootProject){
@@ -142,6 +142,8 @@ public class GMOrphanedFiles {
             allRoomAssets.add(room.getAssetName());
 			selectiveAddToHashMap(assetsInUse, room.allInstances());
 			selectiveAddToHashMap(assetsInUse, room.allTilemaps());
+			/*selectiveAddToHashMap(assetsInUse, room.allSprites());
+			selectiveAddToHashMap(assetsInUse, room.allPaths());*/
 			
 			code.add(room.getCodeString());
             
@@ -219,13 +221,37 @@ public class GMOrphanedFiles {
         ArrayList<GM2Tileset> tilesets=GM2Tileset.allFiles(directory);
         for (GM2Tileset tileset : tilesets){
             allTilesetAssets.add(tileset.getAssetName());
+			selectiveAddToHashMap(assetsInUse, tileset.allSprites());
             
             assets.put(tileset.getID(), tileset);
         }
 		
-		/*for (String s : code){
-			System.out.println(s+"\n");
-		}*/
+		/*
+		 * The options folder is now basically the same as the Configs one in GMS1.
+		 * Pretty sure views are only used internally by the game?
+		 */
+		
+		/*
+		 * Macros are now defined in code instead of in a special place in the IDE, so
+		 * detecting their usage is going to have the same problem as enums in GMS1 did.
+		 * which is to say, it'll be really hard to tell if it's being used or if it's
+		 * being defined. At the end of the day they're just preprocessors so it's not
+		 * like they're going to impact the performance of your program, but I guess they
+		 * still can be annoying if you really have too many of them and sorting through
+		 * them when you write code becomes a problem.
+		 *
+		 * If enough people want me to "fix" this I'll do it, but until then it's not
+		 * a priority.
+		 */
+		
+		codeTokens=findAllCodeTokens(code);
+		
+		there are two problems with this: startingRoom() doesn't return anything because
+		i cant figure out how to determine the first room in the project, and its going
+		to most likely return one of those hash things instead of an asset name. turning
+		the long hash things into a GM2File shouldn't be difficult, though, i hope.
+		
+		mark(assets, rootProject.startingRoom());
     }
     
     /**

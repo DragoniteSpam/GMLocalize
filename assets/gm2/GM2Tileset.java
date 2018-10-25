@@ -56,4 +56,12 @@ public class GM2Tileset extends GM2File {
 		}
 		return list;
 	}
+	
+	public ArrayList<String> allSprites(){
+		ArrayList<String> values=new ArrayList<String>();
+		
+		values.add(json.getString("spriteId"));
+		
+		return values;
+	}
 }
