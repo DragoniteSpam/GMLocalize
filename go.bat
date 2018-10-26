@@ -1,4 +1,4 @@
 cls
 del /S *.class
-"%JAVA_HOME%\bin\javac" GMOrphanedFiles.java
-java GMOrphanedFiles project.gmx project-gms2
+"%JAVA_HOME%\bin\javac" GMLocalize.java
+java GMLocalize project.gmx project-gms2
