@@ -175,7 +175,7 @@ public class GMLocalize {
 		try {
 			PrintWriter printer=new PrintWriter(new FileWriter(outputFileName));
             for (String line : strings){
-				printer.print(line+"\r\n");
+				printer.print("[default] "+line+"\r\n");
 			}
 			printer.close();
         } catch (IOException e){
