@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import java.io.*;
@@ -133,7 +133,7 @@ public class GMLocalize {
     }
 	
 	private static ArrayList<String> sort(ArrayList<String> code, boolean escapeQuotes){
-		HashMap<String, String> lstrings=new HashMap<String, String>();
+		HashSet<String> lstrings=new HashSet<String>();
 		ArrayList<String> output=new ArrayList<String>();
 		
 		final String signal="L(";
@@ -150,8 +150,8 @@ public class GMLocalize {
                         char cp=codeString.charAt(i-1);
                         if (c==quoteCharacter&&(!escapeQuotes||cp!='\\')){
                             String result=builder.toString();
-                            if (!lstrings.containsKey(result)){
-                                lstrings.put(result, result);
+                            if (!lstrings.contains(result)){
+                                lstrings.add(result);
                             }
                             break;
                         } else {
@@ -163,7 +163,7 @@ public class GMLocalize {
 			}
 		}
 		
-		for (String key : lstrings.keySet()){
+		for (String key : lstrings){
 			output.add(key);
 		}
 		
