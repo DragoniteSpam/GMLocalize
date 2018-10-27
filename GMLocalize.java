@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import java.io.*;
 import org.json.*;
@@ -13,13 +15,21 @@ public class GMLocalize {
     
 	public static void main(String[] args) throws IOException {
         if (args.length==0){
-            System.out.println("Incorrect use: use ");
-            System.out.println("    java GMLOcalize <project1name> <project2name> .. <projectNname>");
+            System.out.println("Incorrect use: use");
+            System.out.println("\tjava GMLocalize <[-project1existing]> <project1name> <[-project2existing]> <project2name> .. <[-projectNexisting]> <projectNname>");
+            System.out.println("Example:");
+            System.out.println("\tjava GMLocalize Pong.gmx SpaceInvaders.gmx");
+            System.out.println("\tjava GMLocalize -pongstrings.txt Pong.gmx SpaceInvaders.gmx");
             System.out.println("to use this tool.");
+            System.out.println("(There should probably not be any text in either of those games though.)");
             System.exit(0);
         }
         
-        for (String projectName : args){
+        for (int i=0; i<args.length; i++){
+            String projectName=args[i];
+            if (projectName.charAt(0)=='-'){
+                continue;
+            }
             System.out.println("-----------------------------");
             System.out.println(projectName);
             System.out.println("-----------------------------");
@@ -31,8 +41,15 @@ public class GMLocalize {
                 System.err.println("We couldn't find a Game Maker Studio (1 or 2) project file in the specified folder. "+
                     "Are you sure you're checking the right one?");
             } else {
+                String existingFileName;
+                if (i>0&&args[i-1].charAt(0)=='-'){
+                    existingFileName=args[i-1].substring(1, args[i-1].length());
+                } else {
+                    existingFileName=null;
+                }
+                
 				if (rootProject1!=null){
-					assesGM1Project(projectName, rootProject1);
+					assesGM1Project(projectName, rootProject1, existingFileName);
 				}
 				
 				/*if (rootProject2!=null){
@@ -77,7 +94,7 @@ public class GMLocalize {
         ArrayList<String> localizationStrings=new ArrayList<String>();
     }*/
     
-    public static void assesGM1Project(String directory, GM1Project rootProject){
+    public static void assesGM1Project(String directory, GM1Project rootProject, String existingFileName){
         ArrayList<String> code=new ArrayList<String>();
         ArrayList<String> localizationStrings=new ArrayList<String>();
         
@@ -127,9 +144,14 @@ public class GMLocalize {
 		 * of the strings that follow it
 		 */
 		String outputFileName=rootProject.getAssetName()+"-output.txt";
-		write(sort(code, false), outputFileName);
+        String additionFileName=rootProject.getAssetName()+"-additions.txt";
+		write(sort(code, false), outputFileName, existingFileName, additionFileName);
 		
 		System.out.println("Probable localization strings written to "+outputFileName+".");
+        if (existingFileName!=null){
+            System.out.println("Strings that were found that were not in the original file were "+
+                "written to "+additionFileName+".");
+        }
     }
 	
 	private static ArrayList<String> sort(ArrayList<String> code, boolean escapeQuotes){
@@ -171,15 +193,96 @@ public class GMLocalize {
 		return output;
 	}
 	
-	private static void write(ArrayList<String> strings, String outputFileName){
+	private static void write(ArrayList<String> strings, String outputFileName, String existingFileName, String additionFileName){
+        HashMap<String, HashMap<String, String>> existing=readExisting(existingFileName);
+        final String DEF="[default]";
+        
+        Set<String> codesInUse;
+        boolean hasDefault=false;
+        
+        if (existing==null){
+            codesInUse=null;
+        } else {
+            codesInUse=new HashSet(existing.keySet());
+            if (codesInUse.contains(DEF)){
+                codesInUse.remove(DEF);
+                hasDefault=true;
+            }
+        }
+        
 		try {
 			PrintWriter printer=new PrintWriter(new FileWriter(outputFileName));
+            PrintWriter printerAddition=new PrintWriter(new FileWriter(additionFileName));
             for (String line : strings){
-				printer.print("[default] "+line+"\r\n");
+                printer.print(DEF+line+"\r\n");
+                if (codesInUse!=null){
+                    for (String code : codesInUse){
+                        HashMap<String, String> langStrings=existing.get(code);
+                        if (langStrings.containsKey(line)){
+                            printer.print(code+langStrings.get(line)+"\r\n");
+                        } else {
+                            printer.print(code+"\r\n");
+                        }
+                    }
+                    if (hasDefault){
+                        HashMap<String, String> defaultStrings=existing.get(DEF);
+                        if (!defaultStrings.containsKey(line)){
+                            printerAddition.print(line+"\r\n");
+                        }
+                    }
+                }
 			}
 			printer.close();
+            printerAddition.close();
         } catch (IOException e){
             System.err.println("Something went wrong in: "+outputFileName);
         }
 	}
+    
+    private static HashMap<String, HashMap<String, String>> readExisting(String existingFileName){
+        if (existingFileName==null){
+            return null;
+        }
+        
+        HashMap<String, HashMap<String, String>> values=new HashMap<String, HashMap<String, String>>();
+        final String DEF="[default]";
+        
+        try {
+            BufferedReader bufferedReader=new BufferedReader(new FileReader(new File(existingFileName)));
+            String line, code, contents, original="";
+            
+            while ((line=bufferedReader.readLine())!=null){
+                // comments are permitted, but will be scrubbed out of the updated version
+                if (line.charAt(0)!='#'){
+                    // this will behave unpredictably if you feed it a badly-formatted file
+                    int stopPoint=line.indexOf("]");
+                    if (stopPoint>-1){
+                        code=line.substring(0, stopPoint+1);
+                        contents=line.replace(code, "");
+                        if (code.equals(DEF)){
+                            original=contents;
+                        }
+                        HashMap<String, String> langStrings;
+                        if (values.containsKey(code)){
+                            langStrings=values.get(code);
+                        } else {
+                            langStrings=new HashMap<String, String>();
+                            values.put(code, langStrings);
+                        }
+                        if (!langStrings.containsKey(original)){
+                            langStrings.put(original, contents);
+                        }
+                    }
+                }
+            }
+        
+            bufferedReader.close();
+        } catch (FileNotFoundException e){
+            System.err.println("Didn't find the file: "+existingFileName);
+        } catch (IOException e){
+            System.err.println("Something went wrong in: "+existingFileName);
+        }
+        
+        return values;
+    }
 }
