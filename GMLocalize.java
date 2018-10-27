@@ -59,6 +59,10 @@ public class GMLocalize {
 		System.out.println("\t4. If you put a space between the capital L and the parenthesis, "+
 			"it will NOT be reported, as this program checks for exact matches of the \"signal\" "+
 			"string.");
+        System.out.println("\t5. The program stops reading localization text when it finds a "+
+            "closing quotation mark (either kind), so if you try to combine strings inside the "+
+            "L() script, like L(\"%0 fish, %1 fish, \"+\"%2 fish, %3 fish\", 1, 2, \"red\", "+
+            "\"blue\"), the text that it finds will only be \"%0 fish, %1 fish, \".");
 		System.out.println("I may come back to this and do proper analysis of code some day "+
 			"instead of just searching for substrings, but for the time being I'm the only "+
 			"person who's going to use this, and my code is formatted in such a way that it's "+
@@ -137,27 +141,25 @@ public class GMLocalize {
 		for (String codeString : code){
 			int index=codeString.indexOf(signal);
 			while (index>=0){
-				boolean building=false;
-				char quoteCharacter='"';
-				StringBuilder builder=new StringBuilder();
-				for (int i=index; i<codeString.length(); i++){
-					char c=codeString.charAt(i);
-					if (c=='"'||c=='\''){
-						if (building&&c==quoteCharacter){
-							String result=builder.toString();
-							if (!lstrings.containsKey(result)){
-								lstrings.put(result, result);
-							}
-							break;
-						} else {
-							building=true;
-							quoteCharacter=c;
-						}
-					} else if (building){
-						builder.append(c);
-					}
-				}
-				index=codeString.indexOf(signal+1);
+                char c2=codeString.charAt(index+2);
+                if (c2=='\"'||c2=='\''){
+                    char quoteCharacter=c2;
+                    StringBuilder builder=new StringBuilder();
+                    for (int i=index+3; i<codeString.length(); i++){
+                        char c=codeString.charAt(i);
+                        char cp=codeString.charAt(i-1);
+                        if (c==quoteCharacter&&(!escapeQuotes||cp!='\\')){
+                            String result=builder.toString();
+                            if (!lstrings.containsKey(result)){
+                                lstrings.put(result, result);
+                            }
+                            break;
+                        } else {
+                            builder.append(c);
+                        }
+                    }
+                }
+				index=codeString.indexOf(signal, index+1);
 			}
 		}
 		

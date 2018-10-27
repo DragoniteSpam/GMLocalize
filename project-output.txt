@@ -1,9 +1,0 @@
-this is text to be localized in add_evolution
-this is text to be localized in ba_trainer_intro
-this is text to be localized in battle_individual_action_set_confusion
-this is text to be localized in be_target_speed_decrease_1
-this is text to be localized in get_experience
-this is text to be localized in init.Create
-this is text to be localized in Pawn.Create
-this is text to be localized in pbs_read_moves
-this is text to be localized in World.Draw
